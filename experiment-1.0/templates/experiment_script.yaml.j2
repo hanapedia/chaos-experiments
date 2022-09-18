@@ -1,0 +1,46 @@
+---
+- name: ssh port foreward kubernetes api endpoint
+  hosts: localhost
+  vars:
+    path: ./20220918
+    ver: '1'
+    namespace: sock-shop
+    delay: 200ms
+  tasks:
+{% for manifest in manifests %}
+{% set service = manifest | split('_') | first %}
+    - name: Run the experiment for {{ service }}
+      block:
+        - name: Wait before injecting into {{ service }}
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject {{ manifest }}
+          ansible.builtin.command: "kubectl apply -f ./manifests/{{ manifest }}"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait before deleting {{ manifest }}
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: Delete {{ manifest }}
+          ansible.builtin.command: "kubectl delete -f ./manifests/{{ manifest }}"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/{{ service }}_experiment_logs.csv 
+            mode: '1777'
+          vars:
+            name: {{ service }}
+            start_time: {{ '"{{ experiment_start.end }}"' }}
+            end_time: {{ '"{{ experiment_end.end }}"' }}
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 60
+
+{% endfor %}

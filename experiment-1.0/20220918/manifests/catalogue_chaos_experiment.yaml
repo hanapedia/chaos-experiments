@@ -1,0 +1,17 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: catalogue-delay-v1
+  namespace: sock-shop
+spec:
+  hosts:
+  - catalogue.sock-shop.svc.cluster.local
+  http:
+  - fault:
+      delay:
+        percentage:
+          value: 100
+        fixedDelay: 200ms
+    route:
+    - destination:
+        host: catalogue.sock-shop.svc.cluster.local

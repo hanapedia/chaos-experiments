@@ -1,0 +1,68 @@
+# vim: set filetype=yaml.ansible :
+---
+- name: ssh port foreward kubernetes api endpoint
+  hosts: localhost
+  vars:
+    path: ./20220918
+    ver: '1'
+    namespace: sock-shop
+    delay: 200ms
+  tasks:
+    - name: Generate kubernetes manifests
+      block:
+        - name: Get the list of service names and save it to variable
+          ansible.builtin.shell: "set -o pipefail && kubectl get svc -n sock-shop | awk 'NR>1{ print $1 }'"
+          changed_when: true
+          register: services
+
+        - name: Ensure that destination directory exists
+          ansible.builtin.file:
+            path: "{{ path }}"
+            state: directory
+            mode: '1777'
+
+        - name: Ensure that manifests directory exists
+          ansible.builtin.file:
+            path: "{{ path }}/manifests"
+            state: directory
+            mode: '1777'
+
+        - name: Generate chaos experiments
+          ansible.builtin.template:
+            src: ./templates/chaos_experiment_manifest.yaml.j2
+            dest: "{{ path }}/manifests/{{ item }}_chaos_experiment.yaml"
+            mode: '1777'
+          vars:
+            service: "{{ item }}"
+          with_items: "{{ services.stdout_lines }}"
+
+    - name: Generate ansible yaml for experiment
+      block:
+        - name: Prepare logging directory
+          ansible.builtin.file:
+            path: "{{ path }}/logs"
+            state: directory
+            mode: '1777'
+
+        - name: Copy logging template to logs directory
+          ansible.builtin.copy:
+            src: ./templates/experiment_logs.csv.j2
+            dest: "{{ path }}/logs/experiment_logs.csv.j2"
+            mode: '1777'
+
+        - name: Retreive the filenames for all of the manifests
+          ansible.builtin.command: "ls {{ path }}/manifests"
+          changed_when: true
+          register: files
+
+        - name: Generate experiment script playbook
+          ansible.builtin.template:
+            src: ./templates/experiment_script.yaml.j2
+            dest: "{{ path }}/experiment_script_v{{ ver }}.yaml"
+            mode: '1777'
+          vars:
+            manifests: "{{ files.stdout_lines }}"
+
+        # - name: debug
+        #   ansible.builtin.debug:
+        #     msg: "{{ manifests }}"

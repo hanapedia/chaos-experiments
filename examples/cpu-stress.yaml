@@ -1,0 +1,20 @@
+apiVersion: chaos-mesh.org/v1alpha1
+kind: StressChaos
+metadata:
+  name: cpu-stress-example
+  namespace: chaos-testing
+spec:
+  mode: one
+  selector:
+    namespaces:
+      - sock-shop
+    labelSelectors:
+      'name': 'orders'
+  stressors:
+    cpu:
+      workers: 1
+      load: 95
+    # memory:
+    #   workers: 4
+    #   size: '256MB'
+  duration: 60s

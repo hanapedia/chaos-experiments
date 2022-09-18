@@ -1,0 +1,17 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: carts-delay-v1
+  namespace: sock-shop
+spec:
+  hosts:
+  - carts.sock-shop.svc.cluster.local
+  http:
+  - fault:
+      delay:
+        percentage:
+          value: 100
+        fixedDelay: 200ms
+    route:
+    - destination:
+        host: carts.sock-shop.svc.cluster.local

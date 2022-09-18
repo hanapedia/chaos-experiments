@@ -1,0 +1,17 @@
+apiVersion: chaos-mesh.org/v1alpha1
+kind: StressChaos
+metadata:
+  name: memory-stress-example
+  namespace: chaos-testing
+spec:
+  mode: one
+  selector:
+    namespaces:
+      - sock-shop
+    labelSelectors:
+      'name': 'catalogue'
+  stressors:
+    memory:
+      workers: 4
+      size: '256MB'
+  duration: 60s
