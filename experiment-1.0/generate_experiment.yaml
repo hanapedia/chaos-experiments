@@ -2,11 +2,6 @@
 ---
 - name: ssh port foreward kubernetes api endpoint
   hosts: localhost
-  vars:
-    path: ./20220918
-    ver: '1'
-    namespace: sock-shop
-    delay: 200ms
   tasks:
     - name: Generate kubernetes manifests
       block:
@@ -21,16 +16,22 @@
             state: directory
             mode: '1777'
 
+        - name: Ensure that versioned directory exists
+          ansible.builtin.file:
+            path: "{{ path }}/{{ ver }}"
+            state: directory
+            mode: '1777'
+
         - name: Ensure that manifests directory exists
           ansible.builtin.file:
-            path: "{{ path }}/manifests"
+            path: "{{ path }}/{{ ver }}/manifests"
             state: directory
             mode: '1777'
 
         - name: Generate chaos experiments
           ansible.builtin.template:
             src: ./templates/chaos_experiment_manifest.yaml.j2
-            dest: "{{ path }}/manifests/{{ item }}_chaos_experiment.yaml"
+            dest: "{{ path }}/{{ ver }}/manifests/{{ item }}_chaos_experiment.yaml"
             mode: '1777'
           vars:
             service: "{{ item }}"
@@ -40,29 +41,40 @@
       block:
         - name: Prepare logging directory
           ansible.builtin.file:
-            path: "{{ path }}/logs"
+            path: "{{ path }}/{{ ver }}/logs"
+            state: directory
+            mode: '1777'
+
+        - name: Prepare rca directory
+          ansible.builtin.file:
+            path: "{{ path }}/{{ ver }}/{{ rca_dir }}"
             state: directory
             mode: '1777'
 
         - name: Copy logging template to logs directory
           ansible.builtin.copy:
             src: ./templates/experiment_logs.csv.j2
-            dest: "{{ path }}/logs/experiment_logs.csv.j2"
+            dest: "{{ path }}/{{ ver }}/logs/experiment_logs.csv.j2"
             mode: '1777'
 
         - name: Retreive the filenames for all of the manifests
-          ansible.builtin.command: "ls {{ path }}/manifests"
+          ansible.builtin.command: "ls {{ path }}/{{ ver }}/manifests"
           changed_when: true
           register: files
 
         - name: Generate experiment script playbook
           ansible.builtin.template:
             src: ./templates/experiment_script.yaml.j2
-            dest: "{{ path }}/experiment_script_v{{ ver }}.yaml"
+            dest: "{{ path }}/{{ ver }}/experiment_script.yaml"
             mode: '1777'
           vars:
             manifests: "{{ files.stdout_lines }}"
 
+        - name: Copy python script to run rca
+          ansible.builtin.copy:
+            src: "../rca/{{ rca_filename }}"
+            dest: "{{ path }}/{{ ver }}/rca.py"
+            mode: '1777'
         # - name: debug
         #   ansible.builtin.debug:
         #     msg: "{{ manifests }}"

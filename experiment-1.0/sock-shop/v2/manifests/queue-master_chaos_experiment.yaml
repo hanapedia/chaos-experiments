@@ -1,0 +1,17 @@
+apiVersion: chaos-mesh.org/v1alpha1
+kind: StressChaos
+metadata:
+  name: queue-master-delay-v2
+  namespace: chaos-testing
+spec:
+  mode: one
+  selector:
+    namespaces:
+      - sock-shop
+    labelSelectors:
+      'name': queue-master
+  stressors:
+    cpu:
+      workers: 2
+      load: 100
+  duration: 60s

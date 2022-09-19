@@ -1,8 +1,8 @@
-{% if 'db' not in service and service != 'rabbitmq' and service != 'queue-master' %}
+{% if 'db' not in service and service not in non_http_svc %}
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
-  name: {{ service }}-delay-v{{ ver }}
+  name: {{ service }}-delay-{{ ver }}
   namespace: {{ namespace }}
 spec:
   hosts:
@@ -20,7 +20,7 @@ spec:
 apiVersion: chaos-mesh.org/v1alpha1
 kind: StressChaos
 metadata:
-  name: {{ service }}-delay-v{{ ver }}
+  name: {{ service }}-delay-{{ ver }}
   namespace: chaos-testing
 spec:
   mode: one
@@ -31,7 +31,7 @@ spec:
       'name': {{ service }}
   stressors:
     cpu:
-      workers: 1
-      load: 100
+      workers: {{ cpu_workers }}
+      load: {{ cpu_load }}
   duration: 60s
 {% endif %}

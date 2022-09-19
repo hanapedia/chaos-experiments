@@ -1,0 +1,17 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: front-end-delay-v2
+  namespace: sock-shop
+spec:
+  hosts:
+  - front-end.sock-shop.svc.cluster.local
+  http:
+  - fault:
+      delay:
+        percentage:
+          value: 100
+        fixedDelay: 200ms
+    route:
+    - destination:
+        host: front-end.sock-shop.svc.cluster.local

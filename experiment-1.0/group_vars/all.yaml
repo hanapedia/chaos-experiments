@@ -1,0 +1,12 @@
+---
+path: ./sock-shop
+ver: 'v2'
+namespace: sock-shop
+non_http_svc:
+  - rabbitmq
+  - queue-master
+delay: 200ms
+cpu_workers: 2
+cpu_load: 100
+rca_filename: run_microrca.py
+rca_dir: ./rca/

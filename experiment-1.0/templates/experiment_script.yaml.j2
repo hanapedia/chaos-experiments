@@ -1,16 +1,20 @@
+# vim: set filetype=yaml.ansible :
 ---
 - name: ssh port foreward kubernetes api endpoint
   hosts: localhost
   vars:
-    path: ./20220918
-    ver: '1'
-    namespace: sock-shop
-    delay: 200ms
+    rca_dir: {{ rca_dir }}
   tasks:
 {% for manifest in manifests %}
 {% set service = manifest | split('_') | first %}
     - name: Run the experiment for {{ service }}
       block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./{{ '{{ rca_dir }}' }}/{{ service }}"
+            state: directory
+            mode: '1777'
+
         - name: Wait before injecting into {{ service }}
           ansible.builtin.wait_for:
             timeout: 120
@@ -32,15 +36,28 @@
         - name: Record the experiment
           ansible.builtin.template:
             src: ./logs/experiment_logs.csv.j2
-            dest: ./logs/{{ service }}_experiment_logs.csv 
+            dest: ./logs/{{ service }}_experiment_logs.csv
             mode: '1777'
           vars:
             name: {{ service }}
             start_time: {{ '"{{ experiment_start.end }}"' }}
             end_time: {{ '"{{ experiment_end.end }}"' }}
 
+        - name: Run RCA
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - {{ service }}
+              - --end_time
+              - {{ '"{{ experiment_end.end }}"'}}
+              - --folder_path
+              - {{ '"{{ rca_dir }}"'}}
+          changed_when: true
+
         - name: Wait before starting next experiement
           ansible.builtin.wait_for:
-            timeout: 60
+            timeout: 30
 
 {% endfor %}
