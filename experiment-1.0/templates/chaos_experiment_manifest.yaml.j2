@@ -1,37 +1,22 @@
-{% if 'db' not in service and service not in non_http_svc %}
-apiVersion: networking.istio.io/v1beta1
-kind: VirtualService
-metadata:
-  name: {{ service }}-delay-{{ ver }}
-  namespace: {{ namespace }}
-spec:
-  hosts:
-  - {{ service }}.{{ namespace }}.svc.cluster.local
-  http:
-  - fault:
-      delay:
-        percentage:
-          value: 100
-        fixedDelay: {{ delay }}
-    route:
-    - destination:
-        host: {{ service }}.{{ namespace }}.svc.cluster.local
-{% else %}
 apiVersion: chaos-mesh.org/v1alpha1
-kind: StressChaos
+kind: NetworkChaos
 metadata:
   name: {{ service }}-delay-{{ ver }}
   namespace: chaos-testing
 spec:
-  mode: one
+  action: delay 
+  mode: one 
   selector:
     namespaces:
       - {{ namespace }}
     labelSelectors:
       'name': {{ service }}
-  stressors:
-    cpu:
-      workers: {{ cpu_workers }}
-      load: {{ cpu_load }}
-  duration: 60s
-{% endif %}
+  delay:
+    latency: {{ delay }}
+  duration: {{ duration }}
+  direction: {{ direction }}
+  target:
+    mode: all
+    selector:
+      namespaces:
+        - {{ namespace }}

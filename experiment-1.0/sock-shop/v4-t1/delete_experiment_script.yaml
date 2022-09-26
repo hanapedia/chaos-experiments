@@ -1,0 +1,63 @@
+# vim: set filetype=yaml.ansible :
+---
+- name: ssh port foreward kubernetes api endpoint
+  hosts: localhost
+  vars:
+    rca_dir: ./rca/
+  tasks:
+    - name: Replace carts-db_chaos_experiment.yaml
+      ansible.builtin.command: "kubectl replace -f ./manifests/carts-db_chaos_experiment.yaml"
+      changed_when: true
+      register: experiment_end
+    - name: Replace carts_chaos_experiment.yaml
+      ansible.builtin.command: "kubectl replace -f ./manifests/carts_chaos_experiment.yaml"
+      changed_when: true
+      register: experiment_end
+    - name: Replace catalogue-db_chaos_experiment.yaml
+      ansible.builtin.command: "kubectl replace -f ./manifests/catalogue-db_chaos_experiment.yaml"
+      changed_when: true
+      register: experiment_end
+    - name: Replace catalogue_chaos_experiment.yaml
+      ansible.builtin.command: "kubectl replace -f ./manifests/catalogue_chaos_experiment.yaml"
+      changed_when: true
+      register: experiment_end
+    - name: Replace front-end_chaos_experiment.yaml
+      ansible.builtin.command: "kubectl replace -f ./manifests/front-end_chaos_experiment.yaml"
+      changed_when: true
+      register: experiment_end
+    - name: Replace orders-db_chaos_experiment.yaml
+      ansible.builtin.command: "kubectl replace -f ./manifests/orders-db_chaos_experiment.yaml"
+      changed_when: true
+      register: experiment_end
+    - name: Replace orders_chaos_experiment.yaml
+      ansible.builtin.command: "kubectl replace -f ./manifests/orders_chaos_experiment.yaml"
+      changed_when: true
+      register: experiment_end
+    - name: Replace payment_chaos_experiment.yaml
+      ansible.builtin.command: "kubectl replace -f ./manifests/payment_chaos_experiment.yaml"
+      changed_when: true
+      register: experiment_end
+    - name: Replace queue-master_chaos_experiment.yaml
+      ansible.builtin.command: "kubectl replace -f ./manifests/queue-master_chaos_experiment.yaml"
+      changed_when: true
+      register: experiment_end
+    - name: Replace rabbitmq_chaos_experiment.yaml
+      ansible.builtin.command: "kubectl replace -f ./manifests/rabbitmq_chaos_experiment.yaml"
+      changed_when: true
+      register: experiment_end
+    - name: Replace session-db_chaos_experiment.yaml
+      ansible.builtin.command: "kubectl replace -f ./manifests/session-db_chaos_experiment.yaml"
+      changed_when: true
+      register: experiment_end
+    - name: Replace shipping_chaos_experiment.yaml
+      ansible.builtin.command: "kubectl replace -f ./manifests/shipping_chaos_experiment.yaml"
+      changed_when: true
+      register: experiment_end
+    - name: Replace user-db_chaos_experiment.yaml
+      ansible.builtin.command: "kubectl replace -f ./manifests/user-db_chaos_experiment.yaml"
+      changed_when: true
+      register: experiment_end
+    - name: Replace user_chaos_experiment.yaml
+      ansible.builtin.command: "kubectl replace -f ./manifests/user_chaos_experiment.yaml"
+      changed_when: true
+      register: experiment_end

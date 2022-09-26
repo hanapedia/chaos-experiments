@@ -1,0 +1,22 @@
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: session-db-delay-v5-t2
+  namespace: chaos-testing
+spec:
+  action: delay 
+  mode: one 
+  selector:
+    namespaces:
+      - sock-shop
+    labelSelectors:
+      'name': session-db
+  delay:
+    latency: 30ms
+  duration: 60s
+  direction: from
+  target:
+    mode: all
+    selector:
+      namespaces:
+        - sock-shop

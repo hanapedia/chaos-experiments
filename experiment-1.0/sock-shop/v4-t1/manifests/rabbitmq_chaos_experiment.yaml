@@ -1,0 +1,16 @@
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: rabbitmq-delay-v4-t1
+  namespace: chaos-testing
+spec:
+  action: delay 
+  mode: one 
+  selector:
+    namespaces:
+      - sock-shop
+    labelSelectors:
+      'name': rabbitmq
+  delay:
+    latency: 30ms
+  duration: 60s

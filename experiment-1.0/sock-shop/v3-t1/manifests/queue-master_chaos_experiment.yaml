@@ -1,0 +1,16 @@
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: queue-master-delay-v3
+  namespace: chaos-testing
+spec:
+  action: delay 
+  mode: one 
+  selector:
+    namespaces:
+      - sock-shop
+    labelSelectors:
+      'name': queue-master
+  delay:
+    latency: 30ms
+  duration: 60s

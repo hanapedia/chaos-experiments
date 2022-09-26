@@ -1,0 +1,805 @@
+# vim: set filetype=yaml.ansible :
+---
+- name: ssh port foreward kubernetes api endpoint
+  hosts: localhost
+  vars:
+    rca_dir: ./rca/
+  tasks:
+    - name: Run the experiment for carts-db
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/carts-db"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into carts-db
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject carts-db_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/carts-db_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: Replace carts-db_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl replace -f ./manifests/carts-db_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/carts-db_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: carts-db
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - carts-db
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - 0.03
+              - --alpha
+              - 0.55
+          changed_when: true
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for carts
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/carts"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into carts
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject carts_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/carts_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: Replace carts_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl replace -f ./manifests/carts_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/carts_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: carts
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - carts
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - 0.03
+              - --alpha
+              - 0.55
+          changed_when: true
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for catalogue-db
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/catalogue-db"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into catalogue-db
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject catalogue-db_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/catalogue-db_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: Replace catalogue-db_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl replace -f ./manifests/catalogue-db_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/catalogue-db_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: catalogue-db
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - catalogue-db
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - 0.03
+              - --alpha
+              - 0.55
+          changed_when: true
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for catalogue
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/catalogue"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into catalogue
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject catalogue_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/catalogue_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: Replace catalogue_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl replace -f ./manifests/catalogue_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/catalogue_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: catalogue
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - catalogue
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - 0.03
+              - --alpha
+              - 0.55
+          changed_when: true
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for front-end
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/front-end"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into front-end
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject front-end_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/front-end_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: Replace front-end_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl replace -f ./manifests/front-end_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/front-end_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: front-end
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - front-end
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - 0.03
+              - --alpha
+              - 0.55
+          changed_when: true
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for orders-db
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/orders-db"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into orders-db
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject orders-db_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/orders-db_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: Replace orders-db_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl replace -f ./manifests/orders-db_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/orders-db_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: orders-db
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - orders-db
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - 0.03
+              - --alpha
+              - 0.55
+          changed_when: true
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for orders
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/orders"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into orders
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject orders_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/orders_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: Replace orders_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl replace -f ./manifests/orders_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/orders_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: orders
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - orders
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - 0.03
+              - --alpha
+              - 0.55
+          changed_when: true
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for payment
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/payment"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into payment
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject payment_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/payment_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: Replace payment_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl replace -f ./manifests/payment_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/payment_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: payment
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - payment
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - 0.03
+              - --alpha
+              - 0.55
+          changed_when: true
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for queue-master
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/queue-master"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into queue-master
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject queue-master_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/queue-master_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: Replace queue-master_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl replace -f ./manifests/queue-master_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/queue-master_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: queue-master
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - queue-master
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - 0.03
+              - --alpha
+              - 0.55
+          changed_when: true
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for rabbitmq
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/rabbitmq"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into rabbitmq
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject rabbitmq_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/rabbitmq_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: Replace rabbitmq_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl replace -f ./manifests/rabbitmq_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/rabbitmq_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: rabbitmq
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - rabbitmq
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - 0.03
+              - --alpha
+              - 0.55
+          changed_when: true
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for session-db
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/session-db"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into session-db
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject session-db_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/session-db_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: Replace session-db_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl replace -f ./manifests/session-db_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/session-db_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: session-db
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - session-db
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - 0.03
+              - --alpha
+              - 0.55
+          changed_when: true
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for shipping
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/shipping"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into shipping
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject shipping_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/shipping_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: Replace shipping_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl replace -f ./manifests/shipping_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/shipping_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: shipping
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - shipping
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - 0.03
+              - --alpha
+              - 0.55
+          changed_when: true
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for user-db
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/user-db"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into user-db
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject user-db_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/user-db_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: Replace user-db_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl replace -f ./manifests/user-db_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/user-db_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: user-db
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - user-db
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - 0.03
+              - --alpha
+              - 0.55
+          changed_when: true
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for user
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/user"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into user
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject user_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/user_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: Replace user_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl replace -f ./manifests/user_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/user_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: user
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - user
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - 0.03
+              - --alpha
+              - 0.55
+          changed_when: true
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+

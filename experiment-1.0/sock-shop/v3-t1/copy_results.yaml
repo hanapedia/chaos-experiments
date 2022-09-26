@@ -1,0 +1,28 @@
+# vim: set filetype=yaml.ansible :
+---
+- name: Copy generated results files to one location
+  hosts: localhost
+  vars:
+    rca_dir: ./rca/
+  tasks:
+    # - name: Get the list of service names and save it to variable
+    #   ansible.builtin.shell: "set -o pipefail && kubectl get svc -n sock-shop | awk 'NR>1{ print $1 }'"
+    #   changed_when: true
+    #   register: services
+    - name: Get the list of service names and save it to variable
+      ansible.builtin.command: "ls ./rca"
+      changed_when: true
+      register: services
+
+    - name: Prepare fault directory for rca
+      ansible.builtin.file:
+        path: "./rca_summary"
+        state: directory
+        mode: '1777'
+
+    - name: Copy results files to summary
+      ansible.builtin.copy:
+        src: "{{ rca_dir }}{{ item }}/0_results.csv"
+        dest: "./rca_summary/{{ item }}.csv"
+        mode: '1777'
+      with_items: "{{ services.stdout_lines }}"

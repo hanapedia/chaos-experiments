@@ -1,0 +1,28 @@
+carts-db,"('front-end', 0.5487569766138236)","('carts', 0.3134630446698595)","('orders', 0.13777997871631678)","('orders-db', 0.0)","('shipping', 0.0)","('user', 0.0)","('payment', 0.0)","('carts-db', 0.0)"
+
+carts,"('front-end', 0.5651591467749806)","('carts', 0.270127133344232)","('orders', 0.16471371988078753)","('orders-db', 0.0)","('payment', 0.0)","('shipping', 0.0)","('user', 0.0)","('carts-db', 0.0)"
+
+catalogue-db,"('front-end', 0.5386290038964844)","('catalogue', 0.4613709961035156)","('catalogue-db', 0.0)"
+
+catalogue,"('front-end', 0.5386290038964844)","('catalogue', 0.4613709961035156)","('catalogue-db', 0.0)"
+
+front-end
+
+orders-db
+
+orders,"('payment', 0.5146811237418027)","('orders', 0.3322083333333333)","('shipping', 0.1531105429248639)","('rabbitmq', 0.0)"
+
+payment,"('payment', 0.6069664236979166)","('orders', 0.39303357630208335)"
+
+queue-master
+
+rabbitmq
+
+session-db
+
+shipping,"('orders', 0.5386290038964844)","('shipping', 0.4613709961035156)","('rabbitmq', 0.0)"
+
+user-db,"('user', 0.64971003546875)","('front-end', 0.175144982265625)","('orders', 0.175144982265625)","('user-db', 0.0)"
+
+user,"('front-end', 0.5797461005865454)","('user', 0.2318685044901262)","('orders', 0.18838539492332848)","('orders-db', 0.0)","('carts', 0.0)","('payment', 0.0)","('shipping', 0.0)","('user-db', 0.0)"
+

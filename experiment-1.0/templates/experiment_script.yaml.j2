@@ -4,6 +4,21 @@
   hosts: localhost
   vars:
     rca_dir: {{ rca_dir }}
+{% if alpha_threshold is defined %}
+    alpha_threshold: {{ alpha_threshold }}
+{% endif %}
+{% if alphas_all is defined %}
+    alphas:
+{% for alpha_all in alphas_all %}
+      - {{ alpha_all }}
+{% endfor %}
+{% endif %}
+{% if thresholds is defined %}
+    thresholds:
+{% for threshold in thresholds %}
+      - {{ threshold }}
+{% endfor %}
+{% endif %}
   tasks:
 {% for manifest in manifests %}
 {% set service = manifest | split('_') | first %}
@@ -11,7 +26,7 @@
       block:
         - name: Prepare fault directory for rca
           ansible.builtin.file:
-            path: "./{{ '{{ rca_dir }}' }}/{{ service }}"
+            path: "{{ rca_dir }}{{ service }}"
             state: directory
             mode: '1777'
 
@@ -24,11 +39,11 @@
           changed_when: true
           register: experiment_start
 
-        - name: Wait before deleting {{ manifest }}
+        - name: Wait for injection to complete
           ansible.builtin.wait_for:
             timeout: 60
 
-        - name: Delete {{ manifest }}
+        - name: delete {{ manifest }}
           ansible.builtin.command: "kubectl delete -f ./manifests/{{ manifest }}"
           changed_when: true
           register: experiment_end
@@ -43,6 +58,7 @@
             start_time: {{ '"{{ experiment_start.end }}"' }}
             end_time: {{ '"{{ experiment_end.end }}"' }}
 
+{% if alpha_threshold is defined %}
         - name: Run RCA
           ansible.builtin.command:
             argv:
@@ -53,8 +69,78 @@
               - --end_time
               - {{ '"{{ experiment_end.end }}"'}}
               - --folder_path
-              - {{ '"{{ rca_dir }}"'}}
+              - {{ rca_dir }}
+              - --ad_threshold
+              - {{ '"{{ item.threshold }}"' }}
+              - --alpha
+              - {{ '"{{ item.alpha }}"' }}
+              - --results_csv
+              - "./results_a_{{ '{{ item.alpha }}' }}_t_{{ '{{ item.threshold }}' }}.csv"
           changed_when: true
+          with_items: {{ '"{{ alpha_threshold }}"' }}
+
+{% elif alphas_all is defined %}
+        - name: Run RCA
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - {{ service }}
+              - --end_time
+              - {{ '"{{ experiment_end.end }}"'}}
+              - --folder_path
+              - {{ rca_dir }}
+              - --ad_threshold
+              - {{ ad_threshold }}
+              - --alpha
+              - {{ '"{{ item }}"' }}
+              - --results_csv
+              - "./results_a_{{ '{{ item }}' }}.csv"
+          changed_when: true
+          with_items: {{ '"{{ alphas }}"' }}
+
+{% elif thresholds is defined %}
+        - name: Run RCA
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - {{ service }}
+              - --end_time
+              - {{ '"{{ experiment_end.end }}"'}}
+              - --folder_path
+              - {{ rca_dir }}
+              - --ad_threshold
+              - {{ '"{{ item }}"' }}
+              - --alpha
+              - {{ alpha }}
+              - --results_csv
+              - "./results_t_{{ '{{ item }}' }}.csv"
+          changed_when: true
+          with_items: {{ '"{{ thresholds }}"' }}
+
+{% else %}
+        - name: Run RCA
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - {{ service }}
+              - --end_time
+              - {{ '"{{ experiment_end.end }}"'}}
+              - --folder_path
+              - {{ rca_dir }}
+              - --ad_threshold
+              - {{ ad_threshold }}
+              - --alpha
+              - {{ alpha }}
+              - --results_csv
+              - "./results.csv"
+          changed_when: true
+{% endif %}
 
         - name: Wait before starting next experiement
           ansible.builtin.wait_for:

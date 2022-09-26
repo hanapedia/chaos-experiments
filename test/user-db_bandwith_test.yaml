@@ -1,0 +1,18 @@
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: bandwidth
+  namespace: chaos-testing
+spec:
+  action: bandwidth
+  mode: one
+  selector:
+    namespaces:
+      - sock-shop
+    labelSelectors:
+      'name': 'user-db'
+  bandwidth:
+    rate: '50bps'
+    limit: 20971520
+    buffer: 100
+  duration: 60s

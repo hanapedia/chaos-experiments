@@ -1,0 +1,16 @@
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: network-delay-user-db
+  namespace: chaos-testing
+spec:
+  action: delay # the specific chaos action to inject
+  mode: one # the mode to run chaos action; supported modes are one/all/fixed/fixed-percent/random-max-percent
+  selector: # pods where to inject chaos actions
+    namespaces:
+      - sock-shop
+    labelSelectors:
+      'name': 'user-db' # the label of the pod for chaos injection
+  delay:
+    latency: '50ms'
+  duration: '120s'

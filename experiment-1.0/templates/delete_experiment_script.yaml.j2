@@ -1,0 +1,13 @@
+# vim: set filetype=yaml.ansible :
+---
+- name: ssh port foreward kubernetes api endpoint
+  hosts: localhost
+  vars:
+    rca_dir: {{ rca_dir }}
+  tasks:
+{% for manifest in manifests %}
+    - name: Delete {{ manifest }}
+      ansible.builtin.command: "kubectl delete -f ./manifests/{{ manifest }}"
+      changed_when: true
+      register: experiment_end
+{% endfor %}

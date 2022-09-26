@@ -1,6 +1,6 @@
 # vim: set filetype=yaml.ansible :
 ---
-- name: ssh port foreward kubernetes api endpoint
+- name: Set up chaos experiment
   hosts: localhost
   tasks:
     - name: Generate kubernetes manifests
@@ -70,11 +70,21 @@
           vars:
             manifests: "{{ files.stdout_lines }}"
 
+        - name: Generate cleanup script playbook
+          ansible.builtin.template:
+            src: ./templates/delete_experiment_script.yaml.j2
+            dest: "{{ path }}/{{ ver }}/delete_experiment_script.yaml"
+            mode: '1777'
+          vars:
+            manifests: "{{ files.stdout_lines }}"
+
         - name: Copy python script to run rca
           ansible.builtin.copy:
             src: "../rca/{{ rca_filename }}"
             dest: "{{ path }}/{{ ver }}/rca.py"
             mode: '1777'
+
+
         # - name: debug
         #   ansible.builtin.debug:
         #     msg: "{{ manifests }}"

@@ -1,0 +1,3 @@
+orders_payment,orders_shipping
+"('orders', 0.561)","('payment', 0.3713223372821335)","('shipping', 0.0676776627178665)","('node1-k8s-v2', 0.0)","('rabbitmq', 0.0)"
+"('orders', 0.561)","('payment', 0.3713223372821335)","('shipping', 0.0676776627178665)","('rabbitmq', 0.0)"
