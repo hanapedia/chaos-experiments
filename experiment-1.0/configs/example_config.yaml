@@ -1,0 +1,26 @@
+---
+# name for the root directory, used for namespacing
+path: ./sock-shop
+# version for the generated experiment
+ver: 'v5-t3'
+# k8s namespace for rca
+namespace: sock-shop
+# network delay
+delay: 30ms
+# network delay duration
+duration: 60s
+# network delay direction
+direction: both #to, from, or both
+# rca executable in python
+rca_filename: run_microrca.py
+# directory to save rca logs and results
+rca_dir: ./rca/
+# alpha for MicroRCA
+alpha: 0.55
+# ad_threshold for MicroRCA
+ad_threshold: 0.05
+# alpha and ad_threshold pairs for MicroRCA
+alpha_threshold:
+  - { alpha: 0.3, threshold: 0.07}
+  - { alpha: 0.7, threshold: 0.03}
+  - { alpha: 0.5, threshold: 0.05}

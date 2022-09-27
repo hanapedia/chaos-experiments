@@ -2,6 +2,8 @@
 ---
 - name: Set up chaos experiment
   hosts: localhost
+  vars_files:
+    - "{{ config_file }}"
   tasks:
     - name: Generate kubernetes manifests
       block:
@@ -84,6 +86,17 @@
             dest: "{{ path }}/{{ ver }}/rca.py"
             mode: '1777'
 
+        - name: Generate experiment details file
+          ansible.builtin.template:
+            src: ./templates/experiment_details.md.j2
+            dest: "{{ path }}/{{ ver }}/experiment_details.md"
+            mode: '1777'
+
+        - name: Copy ansible config
+          ansible.builtin.copy:
+            src: ./ansible.cfg
+            dest: "{{ path }}/{{ ver }}/ansible.cfg"
+            mode: '1777'
 
         # - name: debug
         #   ansible.builtin.debug:

@@ -1,0 +1,22 @@
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: shipping-delay-v5-t3
+  namespace: chaos-testing
+spec:
+  action: delay 
+  mode: one 
+  selector:
+    namespaces:
+      - sock-shop
+    labelSelectors:
+      'name': shipping
+  delay:
+    latency: 30ms
+  duration: 60s
+  direction: both
+  target:
+    mode: all
+    selector:
+      namespaces:
+        - sock-shop

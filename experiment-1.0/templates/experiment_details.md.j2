@@ -1,0 +1,11 @@
+# {{ namespace }} {{ ver }}
+## Fault
+- Delay: {{ delay }}
+- Duration: {{ duration }}
+- Direction: {{ direction }}
+## RCA
+- {{ rca_filename }}
+### Params
+{% for param in alpha_threshold %}
+  alpha: {{ param.alpha }}, threshold: {{ param.threshold }}
+{% endfor %} 

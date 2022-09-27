@@ -1,0 +1,16 @@
+carts-db,"('carts', 0.64971003546875)","('front-end', 0.175144982265625)","('orders', 0.175144982265625)","('carts-db', 0.0)"
+
+carts-db,"('carts', 0.64971003546875)","('front-end', 0.175144982265625)","('orders', 0.175144982265625)","('carts-db', 0.0)"
+
+carts,"('carts', 0.64971003546875)","('front-end', 0.175144982265625)","('orders', 0.175144982265625)","('carts-db', 0.0)"
+
+catalogue-db,"('front-end', 0.5386290038964844)","('catalogue', 0.4613709961035156)","('catalogue-db', 0.0)"
+
+catalogue,"('front-end', 0.5386290038964844)","('catalogue', 0.4613709961035156)","('catalogue-db', 0.0)"
+
+front-end
+
+orders-db
+
+orders,"('payment', 0.4770182217789013)","('orders', 0.3322083333333333)","('shipping', 0.1907734448877652)","('rabbitmq', 0.0)"
+

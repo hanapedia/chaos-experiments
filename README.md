@@ -1,7 +1,18 @@
 # Chaos Experiments
 This project automates chaos test manifest generation and application via ansible
 
+## Usage of experiment-1.0
+1. create  experiment configuration files in yaml
+2. Generate experiment
+```
+cd experiment-1.0
+ansible-playbook generate_experiment.yaml --extra-vars "config_file=./path/to/config.yaml"
+cd ./path/to/generated-experiment
+ansible-playbook experiment_script.yaml
+```
+
 ## Types of chaos experiments
+*only network delay is implemented*
 ### K8s Performance anomalies
 - CPU stress
 - memory stress

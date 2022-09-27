@@ -1,13 +1,10 @@
 ---
 path: ./sock-shop
-ver: 'v5-t2'
+ver: 'v5-t3'
 namespace: sock-shop
-non_http_svc:
-  - rabbitmq
-  - queue-master
 delay: 30ms
 duration: 60s
-direction: from #to, from, or both
+direction: both #to, from, or both
 rca_filename: run_microrca.py
 rca_dir: ./rca/
 alpha: 0.55
@@ -16,14 +13,3 @@ alpha_threshold:
   - { alpha: 0.3, threshold: 0.07}
   - { alpha: 0.7, threshold: 0.03}
   - { alpha: 0.5, threshold: 0.05}
-# alphas_all:
-#   - 0.1
-#   - 0.3
-#   - 0.5
-#   - 0.7
-#   - 0.9
-# thresholds:
-#   - 0.01
-#   - 0.03
-#   - 0.07
-#   - 0.09 
