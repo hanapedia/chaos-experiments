@@ -1,3 +1,0 @@
-orders_payment,orders_shipping
-"('payment', 0.46685664370606555)","('orders', 0.3322083333333333)","('shipping', 0.20093502296060117)","('home-cluster-node2', 0.0)","('rabbitmq', 0.0)","('home-cluster-node3', 0.0)"
-"('payment', 0.46685664370606555)","('orders', 0.3322083333333333)","('shipping', 0.20093502296060117)","('rabbitmq', 0.0)"

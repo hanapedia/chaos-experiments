@@ -1,10 +1,11 @@
 # Fault injection version 1.0
 ## Details
 ### Injected faults
-- Http network delay for services with http endpoints
-  - 200ms delay
-- CPU or memory stress for services without http endpoints
-  - 95% CPU usage
+<!-- - Http network delay for services with http endpoints -->
+<!--   - 200ms delay -->
+<!-- - CPU or memory stress for services without http endpoints -->
+<!--   - 95% CPU usage -->
+- network delay
 
 ### Duration
 - 4 minutes per fault

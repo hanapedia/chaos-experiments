@@ -1,0 +1,3 @@
+orders_payment,shipping_rabbitmq
+"('orders', 0.645187579778561)","('payment', 0.5161260194469091)","('shipping', 0.1020734871786408)","('home-cluster-node2', 0.0)","('home-cluster-node1', 0.0)","('rabbitmq', -0.07169307748262332)","('queue-master', -0.19169400892148744)"
+"('orders', 0.645187579778561)","('payment', 0.5161260194469091)","('shipping', 0.1020734871786408)","('rabbitmq', -0.07169307748262332)","('queue-master', -0.19169400892148744)"

@@ -1,0 +1,2023 @@
+# vim: set filetype=yaml.ansible :
+---
+- name: ssh port foreward kubernetes api endpoint
+  hosts: localhost
+  vars:
+    rca_dir: ./rca/
+    alpha_threshold: [{'alpha': 0.3, 'threshold': 0.07}, {'alpha': 0.7, 'threshold': 0.03}, {'alpha': 0.5, 'threshold': 0.05}]
+  tasks:
+    - name: Run the experiment for chain-1-db
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/chain-1-db"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into chain-1-db
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject chain-1-db_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/chain-1-db_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete chain-1-db_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/chain-1-db_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/chain-1-db_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: chain-1-db
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - chain-1-db
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - chc15
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for chain-10-db
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/chain-10-db"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into chain-10-db
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject chain-10-db_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/chain-10-db_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete chain-10-db_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/chain-10-db_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/chain-10-db_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: chain-10-db
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - chain-10-db
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - chc15
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for chain-10
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/chain-10"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into chain-10
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject chain-10_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/chain-10_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete chain-10_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/chain-10_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/chain-10_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: chain-10
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - chain-10
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - chc15
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for chain-11-db
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/chain-11-db"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into chain-11-db
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject chain-11-db_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/chain-11-db_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete chain-11-db_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/chain-11-db_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/chain-11-db_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: chain-11-db
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - chain-11-db
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - chc15
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for chain-11
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/chain-11"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into chain-11
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject chain-11_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/chain-11_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete chain-11_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/chain-11_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/chain-11_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: chain-11
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - chain-11
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - chc15
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for chain-12-db
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/chain-12-db"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into chain-12-db
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject chain-12-db_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/chain-12-db_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete chain-12-db_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/chain-12-db_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/chain-12-db_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: chain-12-db
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - chain-12-db
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - chc15
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for chain-12
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/chain-12"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into chain-12
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject chain-12_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/chain-12_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete chain-12_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/chain-12_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/chain-12_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: chain-12
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - chain-12
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - chc15
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for chain-13-db
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/chain-13-db"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into chain-13-db
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject chain-13-db_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/chain-13-db_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete chain-13-db_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/chain-13-db_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/chain-13-db_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: chain-13-db
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - chain-13-db
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - chc15
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for chain-13
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/chain-13"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into chain-13
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject chain-13_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/chain-13_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete chain-13_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/chain-13_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/chain-13_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: chain-13
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - chain-13
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - chc15
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for chain-14-db
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/chain-14-db"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into chain-14-db
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject chain-14-db_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/chain-14-db_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete chain-14-db_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/chain-14-db_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/chain-14-db_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: chain-14-db
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - chain-14-db
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - chc15
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for chain-14
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/chain-14"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into chain-14
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject chain-14_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/chain-14_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete chain-14_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/chain-14_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/chain-14_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: chain-14
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - chain-14
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - chc15
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for chain-15-db
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/chain-15-db"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into chain-15-db
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject chain-15-db_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/chain-15-db_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete chain-15-db_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/chain-15-db_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/chain-15-db_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: chain-15-db
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - chain-15-db
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - chc15
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for chain-15
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/chain-15"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into chain-15
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject chain-15_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/chain-15_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete chain-15_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/chain-15_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/chain-15_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: chain-15
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - chain-15
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - chc15
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for chain-1
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/chain-1"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into chain-1
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject chain-1_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/chain-1_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete chain-1_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/chain-1_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/chain-1_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: chain-1
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - chain-1
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - chc15
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for chain-2-db
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/chain-2-db"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into chain-2-db
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject chain-2-db_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/chain-2-db_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete chain-2-db_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/chain-2-db_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/chain-2-db_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: chain-2-db
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - chain-2-db
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - chc15
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for chain-2
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/chain-2"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into chain-2
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject chain-2_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/chain-2_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete chain-2_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/chain-2_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/chain-2_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: chain-2
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - chain-2
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - chc15
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for chain-3-db
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/chain-3-db"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into chain-3-db
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject chain-3-db_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/chain-3-db_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete chain-3-db_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/chain-3-db_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/chain-3-db_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: chain-3-db
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - chain-3-db
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - chc15
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for chain-3
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/chain-3"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into chain-3
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject chain-3_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/chain-3_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete chain-3_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/chain-3_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/chain-3_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: chain-3
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - chain-3
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - chc15
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for chain-4-db
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/chain-4-db"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into chain-4-db
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject chain-4-db_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/chain-4-db_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete chain-4-db_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/chain-4-db_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/chain-4-db_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: chain-4-db
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - chain-4-db
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - chc15
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for chain-4
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/chain-4"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into chain-4
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject chain-4_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/chain-4_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete chain-4_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/chain-4_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/chain-4_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: chain-4
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - chain-4
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - chc15
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for chain-5-db
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/chain-5-db"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into chain-5-db
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject chain-5-db_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/chain-5-db_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete chain-5-db_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/chain-5-db_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/chain-5-db_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: chain-5-db
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - chain-5-db
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - chc15
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for chain-5
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/chain-5"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into chain-5
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject chain-5_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/chain-5_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete chain-5_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/chain-5_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/chain-5_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: chain-5
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - chain-5
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - chc15
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for chain-6-db
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/chain-6-db"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into chain-6-db
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject chain-6-db_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/chain-6-db_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete chain-6-db_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/chain-6-db_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/chain-6-db_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: chain-6-db
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - chain-6-db
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - chc15
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for chain-6
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/chain-6"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into chain-6
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject chain-6_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/chain-6_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete chain-6_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/chain-6_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/chain-6_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: chain-6
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - chain-6
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - chc15
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for chain-7-db
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/chain-7-db"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into chain-7-db
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject chain-7-db_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/chain-7-db_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete chain-7-db_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/chain-7-db_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/chain-7-db_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: chain-7-db
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - chain-7-db
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - chc15
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for chain-7
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/chain-7"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into chain-7
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject chain-7_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/chain-7_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete chain-7_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/chain-7_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/chain-7_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: chain-7
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - chain-7
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - chc15
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for chain-8-db
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/chain-8-db"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into chain-8-db
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject chain-8-db_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/chain-8-db_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete chain-8-db_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/chain-8-db_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/chain-8-db_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: chain-8-db
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - chain-8-db
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - chc15
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for chain-8
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/chain-8"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into chain-8
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject chain-8_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/chain-8_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete chain-8_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/chain-8_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/chain-8_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: chain-8
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - chain-8
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - chc15
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for chain-9-db
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/chain-9-db"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into chain-9-db
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject chain-9-db_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/chain-9-db_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete chain-9-db_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/chain-9-db_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/chain-9-db_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: chain-9-db
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - chain-9-db
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - chc15
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for chain-9
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/chain-9"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into chain-9
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject chain-9_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/chain-9_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete chain-9_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/chain-9_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/chain-9_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: chain-9
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - chain-9
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - chc15
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for gateway
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/gateway"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into gateway
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject gateway_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/gateway_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete gateway_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/gateway_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/gateway_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: gateway
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - gateway
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - chc15
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+

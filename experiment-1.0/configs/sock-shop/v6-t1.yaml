@@ -2,6 +2,7 @@
 path: ./sock-shop
 ver: 'v6-t1'
 namespace: sock-shop
+description: "Testing microrca that does not exclude dbs"
 delay: 30ms
 duration: 60s
 direction: both #to, from, or both

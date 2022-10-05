@@ -1,0 +1,22 @@
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: chain-9-delay-chc15
+  namespace: chaos-testing
+spec:
+  action: delay 
+  mode: one 
+  selector:
+    namespaces:
+      - chc15
+    labelSelectors:
+      'name': chain-9
+  delay:
+    latency: 30ms
+  duration: 60s
+  direction: both
+  target:
+    mode: all
+    selector:
+      namespaces:
+        - chc15

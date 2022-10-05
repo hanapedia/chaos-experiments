@@ -1,0 +1,3 @@
+gateway_fanout-1,gateway_fanout-2,gateway_fanout-3,gateway_fanout-4,gateway_fanout-5
+"('gateway', 0.425)","('fanout-5', 0.13051747700553243)","('fanout-3', 0.12166400967656894)","('fanout-4', 0.11651003236154828)","('fanout-1', 0.11291751162702798)","('fanout-2', 0.09339096932932238)","('fanout-db', 0.0)","('home-cluster-node1', 0.0)","('home-cluster-node3', 0.0)","('home-cluster-node2', 0.0)"
+"('gateway', 0.425)","('fanout-5', 0.13051747700553243)","('fanout-3', 0.12166400967656894)","('fanout-4', 0.11651003236154828)","('fanout-1', 0.11291751162702798)","('fanout-2', 0.09339096932932238)","('fanout-db', 0.0)"

@@ -1,0 +1,22 @@
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: fanout-14-delay-foc15
+  namespace: chaos-testing
+spec:
+  action: delay 
+  mode: one 
+  selector:
+    namespaces:
+      - foc15
+    labelSelectors:
+      'name': fanout-14
+  delay:
+    latency: 30ms
+  duration: 60s
+  direction: both
+  target:
+    mode: all
+    selector:
+      namespaces:
+        - foc15

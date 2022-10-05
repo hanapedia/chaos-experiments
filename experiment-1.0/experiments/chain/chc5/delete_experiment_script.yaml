@@ -1,0 +1,51 @@
+# vim: set filetype=yaml.ansible :
+---
+- name: ssh port foreward kubernetes api endpoint
+  hosts: localhost
+  vars:
+    rca_dir: ./rca/
+  tasks:
+    - name: Delete chain-1-db_chaos_experiment.yaml
+      ansible.builtin.command: "kubectl delete -f ./manifests/chain-1-db_chaos_experiment.yaml"
+      changed_when: true
+      register: experiment_end
+    - name: Delete chain-1_chaos_experiment.yaml
+      ansible.builtin.command: "kubectl delete -f ./manifests/chain-1_chaos_experiment.yaml"
+      changed_when: true
+      register: experiment_end
+    - name: Delete chain-2-db_chaos_experiment.yaml
+      ansible.builtin.command: "kubectl delete -f ./manifests/chain-2-db_chaos_experiment.yaml"
+      changed_when: true
+      register: experiment_end
+    - name: Delete chain-2_chaos_experiment.yaml
+      ansible.builtin.command: "kubectl delete -f ./manifests/chain-2_chaos_experiment.yaml"
+      changed_when: true
+      register: experiment_end
+    - name: Delete chain-3-db_chaos_experiment.yaml
+      ansible.builtin.command: "kubectl delete -f ./manifests/chain-3-db_chaos_experiment.yaml"
+      changed_when: true
+      register: experiment_end
+    - name: Delete chain-3_chaos_experiment.yaml
+      ansible.builtin.command: "kubectl delete -f ./manifests/chain-3_chaos_experiment.yaml"
+      changed_when: true
+      register: experiment_end
+    - name: Delete chain-4-db_chaos_experiment.yaml
+      ansible.builtin.command: "kubectl delete -f ./manifests/chain-4-db_chaos_experiment.yaml"
+      changed_when: true
+      register: experiment_end
+    - name: Delete chain-4_chaos_experiment.yaml
+      ansible.builtin.command: "kubectl delete -f ./manifests/chain-4_chaos_experiment.yaml"
+      changed_when: true
+      register: experiment_end
+    - name: Delete chain-5-db_chaos_experiment.yaml
+      ansible.builtin.command: "kubectl delete -f ./manifests/chain-5-db_chaos_experiment.yaml"
+      changed_when: true
+      register: experiment_end
+    - name: Delete chain-5_chaos_experiment.yaml
+      ansible.builtin.command: "kubectl delete -f ./manifests/chain-5_chaos_experiment.yaml"
+      changed_when: true
+      register: experiment_end
+    - name: Delete gateway_chaos_experiment.yaml
+      ansible.builtin.command: "kubectl delete -f ./manifests/gateway_chaos_experiment.yaml"
+      changed_when: true
+      register: experiment_end

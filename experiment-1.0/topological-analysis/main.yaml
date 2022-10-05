@@ -1,0 +1,50 @@
+# vim: set filetype=yaml.ansible :
+---
+- name: Get the pagerank for all of the topologies tested
+  hosts: localhost
+  vars:
+    topologies:
+      - name: sock-shop
+        path: sock-shop/v5-t1/rca/front-end/mpg.csv
+      - name: chc5
+        path: chain/chc5/rca/gateway/mpg.csv
+      - name: chc5s
+        path: chain/chc5s/rca/gateway/mpg.csv
+      - name: chc10
+        path: chain/chc10/rca/gateway/mpg.csv
+      - name: chc10s
+        path: chain/chc10s/rca/gateway/mpg.csv
+      - name: chc15
+        path: chain/chc15/rca/gateway/mpg.csv
+      - name: chc15s
+        path: chain/chc15s/rca/gateway/mpg.csv
+      - name: foc5
+        path: fanout/foc5/rca/gateway/mpg.csv
+      - name: foc5s
+        path: fanout/foc5s/rca/gateway/mpg.csv
+      - name: foc10
+        path: fanout/foc10/rca/gateway/mpg.csv
+      - name: foc10s
+        path: fanout/foc10s/rca/gateway/mpg.csv
+      - name: foc15
+        path: fanout/foc15/rca/gateway/mpg.csv
+      - name: foc15s
+        path: fanout/foc15s/rca/gateway/mpg.csv
+  tasks:
+    - name: copy the python script for the analysis
+      ansible.builtin.copy:
+        src: ../../topological-analysis/pagerank.py
+        dest: ./pagerank.py
+        mode: '1777'
+
+    - name: calculate the pagerank for all the topologies
+      changed_when: true
+      with_items: "{{ topologies }}"
+      ansible.builtin.command:
+        argv:
+          - "python"
+          - "pagerank.py"
+          - "--topology_name"
+          - "{{ item.name }}"
+          - "--csv_path"
+          - "../experiments/{{ item.path }}"

@@ -1,0 +1,3 @@
+gateway_fanout-4
+"('gateway', 0.5386290038964844)","('fanout-4', 0.4613709961035156)","('fanout-db', 0.0)","('home-cluster-node3', 0.0)"
+"('gateway', 0.5386290038964844)","('fanout-4', 0.4613709961035156)","('fanout-db', 0.0)"

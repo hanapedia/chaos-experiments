@@ -1,0 +1,41 @@
+# vim: set filetype=yaml.ansible :
+---
+- name: Generate batch chaos experiment
+  hosts: localhost
+  vars:
+    name: chain-fanout-s-5-10-15
+    chains:
+      - chc5
+      - chc5s
+      - chc10
+      - chc10s
+      - chc15
+      - chc15s
+    fanouts:
+      - foc5
+      - foc5s
+      - foc10
+      - foc10s
+      - foc15
+      - foc15s
+    path:
+      generate_experiment: "{{ playbook_dir }}"
+      k8s_deploy_base: "/Users/hirokihanada/code/src/github.com/hanapedia/microservices-topologies/generated"
+  tasks:
+    - name: Make directory for bach experiments
+      ansible.builtin.file:
+        path: ./batch_experiments/{{ name }}
+        state: directory
+        mode: '1777'
+
+    - name: Generate batch experiment
+      ansible.builtin.template:
+        src: ./templates/batch_experiment.yaml.j2
+        dest: "./batch_experiments/{{ name }}/batch_experiment.yaml"
+        mode: '1777'
+
+    - name: Generate batch experiment details
+      ansible.builtin.template:
+        src: "./templates/batch_experiment_details.md.j2"
+        dest: ./batch_experiments/{{ name }}/README.md
+        mode: '1777'

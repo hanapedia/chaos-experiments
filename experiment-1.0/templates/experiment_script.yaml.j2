@@ -60,6 +60,9 @@
 
 {% if alpha_threshold is defined %}
         - name: Run RCA
+          changed_when: true
+          with_items: {{ '"{{ alpha_threshold }}"' }}
+          ignore_errors: true
           ansible.builtin.command:
             argv:
               - python
@@ -76,53 +79,15 @@
               - {{ '"{{ item.alpha }}"' }}
               - --results_csv
               - "./results_a_{{ '{{ item.alpha }}' }}_t_{{ '{{ item.threshold }}' }}.csv"
-          changed_when: true
-          with_items: {{ '"{{ alpha_threshold }}"' }}
-
-{% elif alphas_all is defined %}
-        - name: Run RCA
-          ansible.builtin.command:
-            argv:
-              - python
-              - rca.py
-              - --faults_name
-              - {{ service }}
-              - --end_time
-              - {{ '"{{ experiment_end.end }}"'}}
-              - --folder_path
-              - {{ rca_dir }}
-              - --ad_threshold
-              - {{ ad_threshold }}
-              - --alpha
-              - {{ '"{{ item }}"' }}
-              - --results_csv
-              - "./results_a_{{ '{{ item }}' }}.csv"
-          changed_when: true
-          with_items: {{ '"{{ alphas }}"' }}
-
-{% elif thresholds is defined %}
-        - name: Run RCA
-          ansible.builtin.command:
-            argv:
-              - python
-              - rca.py
-              - --faults_name
-              - {{ service }}
-              - --end_time
-              - {{ '"{{ experiment_end.end }}"'}}
-              - --folder_path
-              - {{ rca_dir }}
-              - --ad_threshold
-              - {{ '"{{ item }}"' }}
-              - --alpha
-              - {{ alpha }}
-              - --results_csv
-              - "./results_t_{{ '{{ item }}' }}.csv"
-          changed_when: true
-          with_items: {{ '"{{ thresholds }}"' }}
+              - --namespace
+              - {{ namespace }}
+              - --include_db
+              - '{{ include_db }}'
 
 {% else %}
         - name: Run RCA
+          ignore_errors: true
+          changed_when: true
           ansible.builtin.command:
             argv:
               - python
@@ -139,9 +104,12 @@
               - {{ alpha }}
               - --results_csv
               - "./results.csv"
-          changed_when: true
-{% endif %}
+              - --namespace
+              - {{ namespace }}
+              - --include_db
+              - '{{ include_db }}'
 
+{% endif %}
         - name: Wait before starting next experiement
           ansible.builtin.wait_for:
             timeout: 30

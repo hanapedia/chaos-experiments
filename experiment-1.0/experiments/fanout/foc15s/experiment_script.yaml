@@ -1,0 +1,1113 @@
+# vim: set filetype=yaml.ansible :
+---
+- name: ssh port foreward kubernetes api endpoint
+  hosts: localhost
+  vars:
+    rca_dir: ./rca/
+    alpha_threshold: [{'alpha': 0.3, 'threshold': 0.07}, {'alpha': 0.7, 'threshold': 0.03}, {'alpha': 0.5, 'threshold': 0.05}]
+  tasks:
+    - name: Run the experiment for fanout-10
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/fanout-10"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into fanout-10
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject fanout-10_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/fanout-10_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete fanout-10_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/fanout-10_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/fanout-10_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: fanout-10
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - fanout-10
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - foc15s
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for fanout-11
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/fanout-11"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into fanout-11
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject fanout-11_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/fanout-11_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete fanout-11_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/fanout-11_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/fanout-11_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: fanout-11
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - fanout-11
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - foc15s
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for fanout-12
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/fanout-12"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into fanout-12
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject fanout-12_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/fanout-12_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete fanout-12_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/fanout-12_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/fanout-12_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: fanout-12
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - fanout-12
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - foc15s
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for fanout-13
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/fanout-13"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into fanout-13
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject fanout-13_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/fanout-13_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete fanout-13_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/fanout-13_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/fanout-13_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: fanout-13
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - fanout-13
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - foc15s
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for fanout-14
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/fanout-14"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into fanout-14
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject fanout-14_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/fanout-14_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete fanout-14_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/fanout-14_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/fanout-14_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: fanout-14
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - fanout-14
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - foc15s
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for fanout-15
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/fanout-15"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into fanout-15
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject fanout-15_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/fanout-15_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete fanout-15_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/fanout-15_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/fanout-15_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: fanout-15
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - fanout-15
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - foc15s
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for fanout-1
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/fanout-1"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into fanout-1
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject fanout-1_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/fanout-1_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete fanout-1_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/fanout-1_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/fanout-1_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: fanout-1
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - fanout-1
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - foc15s
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for fanout-2
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/fanout-2"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into fanout-2
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject fanout-2_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/fanout-2_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete fanout-2_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/fanout-2_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/fanout-2_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: fanout-2
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - fanout-2
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - foc15s
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for fanout-3
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/fanout-3"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into fanout-3
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject fanout-3_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/fanout-3_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete fanout-3_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/fanout-3_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/fanout-3_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: fanout-3
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - fanout-3
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - foc15s
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for fanout-4
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/fanout-4"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into fanout-4
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject fanout-4_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/fanout-4_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete fanout-4_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/fanout-4_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/fanout-4_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: fanout-4
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - fanout-4
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - foc15s
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for fanout-5
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/fanout-5"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into fanout-5
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject fanout-5_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/fanout-5_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete fanout-5_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/fanout-5_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/fanout-5_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: fanout-5
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - fanout-5
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - foc15s
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for fanout-6
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/fanout-6"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into fanout-6
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject fanout-6_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/fanout-6_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete fanout-6_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/fanout-6_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/fanout-6_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: fanout-6
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - fanout-6
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - foc15s
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for fanout-7
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/fanout-7"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into fanout-7
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject fanout-7_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/fanout-7_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete fanout-7_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/fanout-7_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/fanout-7_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: fanout-7
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - fanout-7
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - foc15s
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for fanout-8
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/fanout-8"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into fanout-8
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject fanout-8_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/fanout-8_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete fanout-8_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/fanout-8_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/fanout-8_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: fanout-8
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - fanout-8
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - foc15s
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for fanout-9
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/fanout-9"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into fanout-9
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject fanout-9_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/fanout-9_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete fanout-9_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/fanout-9_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/fanout-9_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: fanout-9
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - fanout-9
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - foc15s
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for fanout-db
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/fanout-db"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into fanout-db
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject fanout-db_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/fanout-db_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete fanout-db_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/fanout-db_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/fanout-db_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: fanout-db
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - fanout-db
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - foc15s
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+
+    - name: Run the experiment for gateway
+      block:
+        - name: Prepare fault directory for rca
+          ansible.builtin.file:
+            path: "./rca/gateway"
+            state: directory
+            mode: '1777'
+
+        - name: Wait before injecting into gateway
+          ansible.builtin.wait_for:
+            timeout: 120
+
+        - name: Inject gateway_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl apply -f ./manifests/gateway_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_start
+
+        - name: Wait for injection to complete
+          ansible.builtin.wait_for:
+            timeout: 60
+
+        - name: delete gateway_chaos_experiment.yaml
+          ansible.builtin.command: "kubectl delete -f ./manifests/gateway_chaos_experiment.yaml"
+          changed_when: true
+          register: experiment_end
+
+        - name: Record the experiment
+          ansible.builtin.template:
+            src: ./logs/experiment_logs.csv.j2
+            dest: ./logs/gateway_experiment_logs.csv
+            mode: '1777'
+          vars:
+            name: gateway
+            start_time: "{{ experiment_start.end }}"
+            end_time: "{{ experiment_end.end }}"
+
+        - name: Run RCA
+          changed_when: true
+          with_items: "{{ alpha_threshold }}"
+          ignore_errors: true
+          ansible.builtin.command:
+            argv:
+              - python
+              - rca.py
+              - --faults_name
+              - gateway
+              - --end_time
+              - "{{ experiment_end.end }}"
+              - --folder_path
+              - ./rca/
+              - --ad_threshold
+              - "{{ item.threshold }}"
+              - --alpha
+              - "{{ item.alpha }}"
+              - --results_csv
+              - "./results_a_{{ item.alpha }}_t_{{ item.threshold }}.csv"
+              - --namespace
+              - foc15s
+              - --include_db
+              - 'False'
+
+        - name: Wait before starting next experiement
+          ansible.builtin.wait_for:
+            timeout: 30
+

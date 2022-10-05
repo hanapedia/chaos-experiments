@@ -1,0 +1,9 @@
+# Batch experiment
+name: {{ name }}
+includes:  
+{% for chain in chains %}
+- {{ chain }}
+{% endfor %}
+{% for fanout in fanouts %}
+- {{ fanout }}
+{% endfor %}

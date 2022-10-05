@@ -3,37 +3,37 @@
 - name: Set up chaos experiment
   hosts: localhost
   vars_files:
-    - "{{ config_file }}"
+    - "./configs/{{ config_file }}"
   tasks:
     - name: Generate kubernetes manifests
       block:
         - name: Get the list of service names and save it to variable
-          ansible.builtin.shell: "set -o pipefail && kubectl get svc -n sock-shop | awk 'NR>1{ print $1 }'"
+          ansible.builtin.shell: "set -o pipefail && kubectl get svc -n {{ namespace }} | awk 'NR>1{ print $1 }'"
           changed_when: true
           register: services
 
         - name: Ensure that destination directory exists
           ansible.builtin.file:
-            path: "{{ path }}"
+            path: "./experiments/{{ path }}"
             state: directory
             mode: '1777'
 
         - name: Ensure that versioned directory exists
           ansible.builtin.file:
-            path: "{{ path }}/{{ ver }}"
+            path: "./experiments/{{ path }}/{{ ver }}"
             state: directory
             mode: '1777'
 
         - name: Ensure that manifests directory exists
           ansible.builtin.file:
-            path: "{{ path }}/{{ ver }}/manifests"
+            path: "./experiments/{{ path }}/{{ ver }}/manifests"
             state: directory
             mode: '1777'
 
         - name: Generate chaos experiments
           ansible.builtin.template:
             src: ./templates/chaos_experiment_manifest.yaml.j2
-            dest: "{{ path }}/{{ ver }}/manifests/{{ item }}_chaos_experiment.yaml"
+            dest: "./experiments/{{ path }}/{{ ver }}/manifests/{{ item }}_chaos_experiment.yaml"
             mode: '1777'
           vars:
             service: "{{ item }}"
@@ -43,31 +43,31 @@
       block:
         - name: Prepare logging directory
           ansible.builtin.file:
-            path: "{{ path }}/{{ ver }}/logs"
+            path: "./experiments/{{ path }}/{{ ver }}/logs"
             state: directory
             mode: '1777'
 
         - name: Prepare rca directory
           ansible.builtin.file:
-            path: "{{ path }}/{{ ver }}/{{ rca_dir }}"
+            path: "./experiments/{{ path }}/{{ ver }}/{{ rca_dir }}"
             state: directory
             mode: '1777'
 
         - name: Copy logging template to logs directory
           ansible.builtin.copy:
             src: ./templates/experiment_logs.csv.j2
-            dest: "{{ path }}/{{ ver }}/logs/experiment_logs.csv.j2"
+            dest: "./experiments/{{ path }}/{{ ver }}/logs/experiment_logs.csv.j2"
             mode: '1777'
 
         - name: Retreive the filenames for all of the manifests
-          ansible.builtin.command: "ls {{ path }}/{{ ver }}/manifests"
+          ansible.builtin.command: "ls ./experiments/{{ path }}/{{ ver }}/manifests"
           changed_when: true
           register: files
 
         - name: Generate experiment script playbook
           ansible.builtin.template:
             src: ./templates/experiment_script.yaml.j2
-            dest: "{{ path }}/{{ ver }}/experiment_script.yaml"
+            dest: "./experiments/{{ path }}/{{ ver }}/experiment_script.yaml"
             mode: '1777'
           vars:
             manifests: "{{ files.stdout_lines }}"
@@ -75,7 +75,7 @@
         - name: Generate cleanup script playbook
           ansible.builtin.template:
             src: ./templates/delete_experiment_script.yaml.j2
-            dest: "{{ path }}/{{ ver }}/delete_experiment_script.yaml"
+            dest: "./experiments/{{ path }}/{{ ver }}/delete_experiment_script.yaml"
             mode: '1777'
           vars:
             manifests: "{{ files.stdout_lines }}"
@@ -83,19 +83,19 @@
         - name: Copy python script to run rca
           ansible.builtin.copy:
             src: "../rca/{{ rca_filename }}"
-            dest: "{{ path }}/{{ ver }}/rca.py"
+            dest: "./experiments/{{ path }}/{{ ver }}/rca.py"
             mode: '1777'
 
         - name: Generate experiment details file
           ansible.builtin.template:
             src: ./templates/experiment_details.md.j2
-            dest: "{{ path }}/{{ ver }}/experiment_details.md"
+            dest: "./experiments/{{ path }}/{{ ver }}/experiment_details.md"
             mode: '1777'
 
         - name: Copy ansible config
           ansible.builtin.copy:
             src: ./ansible.cfg
-            dest: "{{ path }}/{{ ver }}/ansible.cfg"
+            dest: "./experiments/{{ path }}/{{ ver }}/ansible.cfg"
             mode: '1777'
 
         # - name: debug

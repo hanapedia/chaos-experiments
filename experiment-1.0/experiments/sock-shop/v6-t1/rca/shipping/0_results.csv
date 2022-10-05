@@ -1,0 +1,3 @@
+orders_shipping,shipping_rabbitmq
+"('shipping', 0.7495881744809842)","('orders', 0.6805478283747081)","('home-cluster-node3', 0.0)","('home-cluster-node1', 0.0)","('rabbitmq', -0.0762992288272384)","('queue-master', -0.35383677402845354)"
+"('shipping', 0.7495881744809842)","('orders', 0.6805478283747081)","('rabbitmq', -0.0762992288272384)","('queue-master', -0.35383677402845354)"

@@ -1,0 +1,256 @@
+# vim: set filetype=yaml.ansible :
+---
+- name: Batch chaos experiment
+  hosts: localhost
+  tasks:
+{% for chain in chains %}
+    - name: Deploy app and loadgenerator to K8s
+      block:
+        - name: Deploy {{ chain }}
+          changed_when: true
+          ansible.builtin.command:
+            cmd: kubectl apply -f kubernetes-manifest.yaml
+            chdir: {{ path.k8s_deploy_base }}/{{ chain }}
+
+        - name: Deploy {{ chain }} loadgenerator
+          changed_when: true
+          ansible.builtin.command:
+            cmd: kubectl apply -f loadgenerator-manifest.yaml
+            chdir: {{ path.k8s_deploy_base }}/{{ chain }}
+
+      rescue:
+        - name: Note failed task
+          register: {{ chain }}_deployment_failed
+          ansible.builtin.lineinfile:
+            path: ./failed
+            line: "Task(s) for {{ chain }} when deploying"
+            create: yes
+
+      always:
+        - name: Get the execution end time
+          register: date_now
+          ansible.builtin.command: date
+
+        - name: Note the time
+          ansible.builtin.lineinfile:
+            path: ./log
+            line: "{{ chain }} deployment: {{ '{{ date_now }}' }}"
+            create: yes
+
+    - name: Generate chaos experiment
+      when: {{ chain }}_deployment_failed is not defined
+      block:
+        - name: Generate chaos experiment for {{ chain }}
+          changed_when: true
+          ansible.builtin.command:
+            cmd: "ansible-playbook generate_experiment.yaml --extra-vars 'config_file=/chain/{{ chain }}.yaml'" 
+            chdir: {{ path.generate_experiment }}
+
+      rescue:
+        - name: Note failed task
+          register: {{ chain }}_experiment_generation_failed
+          ansible.builtin.lineinfile:
+            path: ./failed
+            line: "Task(s) for {{ chain }} when generating experiment"
+            create: yes
+
+      always:
+        - name: Get the execution end time
+          register: date_now
+          ansible.builtin.command: date
+
+        - name: Note the time
+          ansible.builtin.lineinfile:
+            path: ./log
+            line: "{{ chain }} experiment generation: {{ '{{ date_now }}' }}"
+            create: yes
+
+    - name: Run chaos experiment
+      when: {{ chain }}_deployment_failed is not defined and {{ chain }}_experiment_generation_failed is not defined
+      block:
+        - name: Wait for deployment to complete
+          ansible.builtin.wait_for:
+            timeout: 90
+
+        - name: Run chaos experiment for {{ chain }}
+          changed_when: true
+          ansible.builtin.command:
+            cmd: ansible-playbook experiment_script.yaml
+            chdir: {{ path.generate_experiment }}/experiments/chain/{{ chain }}
+
+      rescue:
+        - name: Note failed task
+          ansible.builtin.lineinfile:
+            path: ./failed
+            line: "Task(s) for {{ chain }} when running experiment"
+            create: yes
+
+      always:
+        - name: Get the execution end time
+          register: date_now
+          ansible.builtin.command: date
+
+        - name: Note the time
+          ansible.builtin.lineinfile:
+            path: ./log
+            line: "{{ chain }} experiment: {{ '{{ date_now }}' }}"
+            create: yes
+
+    - name: Delete app and loadgenerator from K8s
+      block:
+        - name: Delete {{ chain }}
+          changed_when: true
+          ansible.builtin.command:
+            cmd: kubectl delete -f kubernetes-manifest.yaml
+            chdir: {{ path.k8s_deploy_base }}/{{ chain }}
+
+        - name: Delete {{ chain }} loadgenerator
+          changed_when: true
+          ansible.builtin.command:
+            cmd: kubectl delete -f loadgenerator-manifest.yaml
+            chdir: {{ path.k8s_deploy_base }}/{{ chain }}
+
+      rescue:
+        - name: Note failed task
+          ansible.builtin.lineinfile:
+            path: ./failed
+            line: "Task(s) for {{ chain }} when deploying"
+            create: yes
+
+      always:
+        - name: Get the execution end time
+          register: date_now
+          ansible.builtin.command: date
+
+        - name: Note the time
+          ansible.builtin.lineinfile:
+            path: ./log
+            line: "{{ chain }} deployment: {{ '{{ date_now }}' }}"
+            create: yes
+
+{% endfor %}
+{% for fanout in fanouts %}
+    - name: Deploy app and loadgenerator to K8s
+      block:
+        - name: Deploy {{ fanout }}
+          changed_when: true
+          ansible.builtin.command:
+            cmd: kubectl apply -f kubernetes-manifest.yaml
+            chdir: {{ path.k8s_deploy_base }}/{{ fanout }}
+
+        - name: Deploy {{ fanout }} loadgenerator
+          changed_when: true
+          ansible.builtin.command:
+            cmd: kubectl apply -f loadgenerator-manifest.yaml
+            chdir: {{ path.k8s_deploy_base }}/{{ fanout }}
+
+      rescue:
+        - name: Note failed task
+          register: {{ fanout }}_deployment_failed
+          ansible.builtin.lineinfile:
+            path: ./failed
+            line: "Task(s) for {{ fanout }} when deploying"
+            create: yes
+      always:
+        - name: Get the execution end time
+          register: date_now
+          ansible.builtin.command: date
+
+        - name: Note the time
+          ansible.builtin.lineinfile:
+            path: ./log
+            line: "{{ fanout }} deployment: {{ '{{ date_now }}' }}"
+            create: yes
+
+    - name: Generate chaos experiment
+      when: {{ fanout }}_deployment_failed is not defined
+      block:
+        - name: Generate chaos experiment for {{ fanout }}
+          changed_when: true
+          ansible.builtin.command:
+            cmd: "ansible-playbook generate_experiment.yaml --extra-vars 'config_file=/fanout/{{ fanout }}.yaml'" 
+            chdir: {{ path.generate_experiment }}
+
+      rescue:
+        - name: Note failed task
+          register: {{ fanout }}_experiment_generation_failed
+          ansible.builtin.lineinfile:
+            path: ./failed
+            line: "Task(s) for {{ fanout }} when generating experiment"
+            create: yes
+
+      always:
+        - name: Get the execution end time
+          register: date_now
+          ansible.builtin.command: date
+
+        - name: Note the time
+          ansible.builtin.lineinfile:
+            path: ./log
+            line: "{{ fanout }} experiment generation: {{ '{{ date_now }}' }}"
+            create: yes
+
+    - name: Run chaos experiment
+      when: {{ fanout }}_deployment_failed is not defined and {{ fanout }}_experiment_generation_failed is not defined
+      block:
+        - name: Wait for deployment to complete
+          ansible.builtin.wait_for:
+            timeout: 90
+
+        - name: Run chaos experiment for {{ fanout }}
+          changed_when: true
+          ansible.builtin.command:
+            cmd: ansible-playbook experiment_script.yaml
+            chdir: {{ path.generate_experiment }}/experiments/fanout/{{ fanout }}
+
+      rescue:
+        - name: Note failed task
+          ansible.builtin.lineinfile:
+            path: ./failed
+            line: "Task(s) for {{ fanout }} when running experiment"
+            create: yes
+
+      always:
+        - name: Get the execution end time
+          register: date_now
+          ansible.builtin.command: date
+
+        - name: Note the time
+          ansible.builtin.lineinfile:
+            path: ./log
+            line: "{{ fanout }} experiment: {{ '{{ date_now }}' }}"
+            create: yes
+
+    - name: Delete app and loadgenerator from K8s
+      block:
+        - name: Delete {{ fanout }}
+          changed_when: true
+          ansible.builtin.command:
+            cmd: kubectl delete -f kubernetes-manifest.yaml
+            chdir: {{ path.k8s_deploy_base }}/{{ fanout }}
+
+        - name: Delete {{ fanout }} loadgenerator
+          changed_when: true
+          ansible.builtin.command:
+            cmd: kubectl delete -f loadgenerator-manifest.yaml
+            chdir: {{ path.k8s_deploy_base }}/{{ fanout }}
+
+      rescue:
+        - name: Note failed task
+          ansible.builtin.lineinfile:
+            path: ./failed
+            line: "Task(s) for {{ fanout }} when deploying"
+            create: yes
+
+      always:
+        - name: Get the execution end time
+          register: date_now
+          ansible.builtin.command: date
+
+        - name: Note the time
+          ansible.builtin.lineinfile:
+            path: ./log
+            line: "{{ fanout }} deployment: {{ '{{ date_now }}' }}"
+            create: yes
+
+{% endfor %}

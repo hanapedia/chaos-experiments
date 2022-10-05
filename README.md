@@ -1,7 +1,7 @@
 # Chaos Experiments
 This project automates chaos test manifest generation and application via ansible
 
-## Usage of experiment-1.0
+## Usage for experiment-1.0
 1. create  experiment configuration files in yaml
 2. Generate experiment
 ```
