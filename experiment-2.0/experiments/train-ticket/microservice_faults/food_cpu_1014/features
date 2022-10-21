@@ -1,0 +1,1 @@
+{('gateway', 'food'): ['latency', 'http_status'], ('gateway', 'ts-ui-dashboard'): ['latency'], ('preserve', 'food'): ['latency'], ('preserve-other', 'food'): ['latency'], ('travel2', 'seat'): ['latency']}

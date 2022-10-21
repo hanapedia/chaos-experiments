@@ -1,0 +1,1 @@
+{('basic', 'station'): ['http_status'], ('order-other', 'station'): ['http_status'], ('preserve', 'security'): ['http_status'], ('preserve-other', 'security'): ['http_status'], ('security', 'order'): ['http_status'], ('ticketinfo', 'basic'): ['http_status'], ('travel', 'ticketinfo'): ['http_status'], ('ui-dashboard', 'food'): ['latency'], ('ui-dashboard', 'travel'): ['latency']}

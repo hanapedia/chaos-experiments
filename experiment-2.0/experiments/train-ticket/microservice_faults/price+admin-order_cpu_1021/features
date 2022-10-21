@@ -1,0 +1,1 @@
+{('admin-user', 'user'): ['latency'], ('basic', 'price'): ['latency'], ('gateway', 'admin-order'): ['latency', 'http_status'], ('travel2', 'ticketinfo'): ['latency']}

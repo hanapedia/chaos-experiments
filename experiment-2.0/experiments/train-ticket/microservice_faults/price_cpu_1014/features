@@ -1,0 +1,1 @@
+{('basic', 'price'): ['latency'], ('gateway', 'travel-plan'): ['latency'], ('travel-plan', 'route-plan'): ['latency']}

@@ -1,0 +1,1 @@
+{('admin-basic-info', 'station'): ['latency'], ('gateway', 'contacts'): ['latency', 'http_status'], ('gateway', 'ts-ui-dashboard'): ['latency'], ('preserve', 'contacts'): ['latency'], ('preserve-other', 'contacts'): ['latency'], ('travel2', 'order-other'): ['latency']}

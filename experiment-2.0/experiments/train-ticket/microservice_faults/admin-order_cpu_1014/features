@@ -1,0 +1,1 @@
+{('basic', 'station'): ['latency'], ('cancel', 'inside-payment'): ['latency'], ('food', 'food-map'): ['latency'], ('gateway', 'admin-order'): ['latency', 'http_status'], ('gateway', 'food'): ['http_status'], ('gateway', 'order'): ['http_status'], ('gateway', 'ts-ui-dashboard'): ['latency'], ('travel-plan', 'station'): ['latency']}

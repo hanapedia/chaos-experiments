@@ -1,0 +1,73 @@
+# vim: set filetype=yaml.ansible :
+---
+- name: Set up chaos experiment
+  hosts: localhost
+  tasks:
+    - name: Encode trace to invocations
+      block:
+        - name: get subdirectory names
+          ansible.builtin.command: "ls ./datasets/A/{{ item }}"
+          register: faults
+          changed_when: false
+          with_items: ['api_faults', 'microservice_faults', 'container_faults']
+
+        - name: get subdirectory names
+          ansible.builtin.command: "ls ./datasets/A/uninjection"
+          register: history
+          changed_when: false
+
+        - name: run python script for encoding
+          ansible.builtin.shell:
+            creates: "./{{ item[0] }}/{{ item[1].split('.')[0] }}/invocation.pkl"
+            argv:
+              - python
+              - ./files/run_trace_encoding.py
+              - -i
+              - "./datasets/A/{{ item[0] }}/{{ item[1] }}"
+              - -o
+              - "./{{ item[0] }}/{{ item[1].split('.')[0] }}/invocation.pkl"
+          with_nested:
+            - ['api_faults']
+            - "{{ faults.results[0].stdout_lines }}"
+
+        - name: run python script for encoding
+          ansible.builtin.command:
+            creates: "./{{ item[0] }}/{{ item[1].split('.')[0] }}/invocation.pkl"
+            argv:
+              - python
+              - ./files/run_trace_encoding.py
+              - -i
+              - "./datasets/A/{{ item[0] }}/{{ item[1] }}"
+              - -o
+              - "./{{ item[0] }}/{{ item[1].split('.')[0] }}/invocation.pkl"
+          with_nested:
+            - ['microservice_faults']
+            - "{{ faults.results[1].stdout_lines }}"
+
+        - name: run python script for encoding
+          ansible.builtin.command:
+            creates: "./{{ item[0] }}/{{ item[1].split('.')[0] }}/invocation.pkl"
+            argv:
+              - python
+              - ./files/run_trace_encoding.py
+              - -i
+              - "./datasets/A/{{ item[0] }}/{{ item[1] }}"
+              - -o
+              - "./{{ item[0] }}/{{ item[1].split('.')[0] }}/invocation.pkl"
+          with_nested:
+            - ['container_faults']
+            - "{{ faults.results[2].stdout_lines }}"
+
+        - name: run python script for encoding
+          ansible.builtin.command:
+            creates: "./{{ item[0] }}/{{ item[1] }}"
+            argv:
+              - python
+              - ./files/run_trace_encoding.py
+              - -i
+              - "./datasets/A/uninjection/{{ item[1] }}"
+              - -o
+              - "./{{ item[0] }}/{{ item[1] }}"
+          with_nested:
+            - ['historical_data']
+            - "{{ history.stdout_lines }}"

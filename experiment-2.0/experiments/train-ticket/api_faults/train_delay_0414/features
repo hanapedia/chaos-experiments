@@ -1,0 +1,1 @@
+{('basic', 'train'): ['http_status'], ('order-other', 'station'): ['http_status'], ('preserve', 'order'): ['http_status'], ('route-plan', 'travel2'): ['http_status'], ('security', 'order'): ['http_status'], ('travel', 'ticketinfo'): ['http_status']}

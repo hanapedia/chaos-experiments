@@ -1,0 +1,1 @@
+{('admin-basic-info', 'station'): ['latency'], ('admin-travel', 'travel2'): ['latency'], ('gateway', 'preserve'): ['latency'], ('gateway', 'preserve-other'): ['latency'], ('preserve', 'security'): ['latency'], ('preserve-other', 'security'): ['latency'], ('travel2', 'seat'): ['latency']}

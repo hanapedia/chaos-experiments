@@ -1,0 +1,1 @@
+{('gateway', 'ts-ui-dashboard'): ['latency'], ('inside-payment', 'payment'): ['latency']}
