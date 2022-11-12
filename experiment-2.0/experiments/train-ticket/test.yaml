@@ -1,0 +1,10 @@
+# vim: set filetype=yaml.ansible :
+---
+- hosts: 127.0.0.1
+  connection: local
+  vars_files:
+    - ./configs/filtered-normal-f.yaml
+  roles:
+    - setup
+    - encode
+    - rca

@@ -1,0 +1,15 @@
+fault_types:
+  # - name: api_faults_filtered
+  #   source: api_faults
+  # - name: container_faults_filtered
+  #   source: container_faults
+  - name: microservice_faults_filtered
+    source: microservice_faults
+
+experiment_prefix: gateway
+root_path: results
+filter: true
+filter_name: gateway
+filter_key: -f gateway -f istio-ingressgateway
+
+history_files: -h ./results/historical_data/gateway/3.pkl -h ./results/historical_data/gateway/4.pkl 

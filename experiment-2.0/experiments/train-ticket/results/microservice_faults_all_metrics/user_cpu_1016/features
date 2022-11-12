@@ -1,0 +1,1 @@
+{('cancel', 'user'): ['latency', 'cpu_use'], ('inside-payment', 'payment'): ['cpu_use'], ('preserve', 'user'): ['latency', 'cpu_use'], ('preserve-other', 'user'): ['latency', 'cpu_use']}

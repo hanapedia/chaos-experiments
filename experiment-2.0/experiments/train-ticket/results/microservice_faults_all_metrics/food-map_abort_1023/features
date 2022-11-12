@@ -1,0 +1,1 @@
+{('admin-travel', 'travel2'): ['latency'], ('food', 'food-map'): ['http_status'], ('gateway', 'food'): ['cpu_use', 'http_status']}

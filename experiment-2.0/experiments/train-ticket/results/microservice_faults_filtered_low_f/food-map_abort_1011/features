@@ -1,0 +1,1 @@
+{('food', 'food-map'): ['cpu_use', 'http_status'], ('gateway', 'food'): ['cpu_use', 'http_status'], ('preserve', 'food'): ['cpu_use'], ('preserve', 'ticketinfo'): ['latency'], ('route-plan', 'travel'): ['latency'], ('travel-plan', 'route-plan'): ['latency']}

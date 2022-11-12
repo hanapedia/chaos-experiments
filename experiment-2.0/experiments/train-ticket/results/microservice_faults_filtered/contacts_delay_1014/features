@@ -1,0 +1,1 @@
+{('gateway', 'contacts'): ['latency', 'http_status'], ('gateway', 'preserve'): ['latency'], ('gateway', 'preserve-other'): ['latency'], ('preserve', 'contacts'): ['latency'], ('preserve-other', 'contacts'): ['latency']}

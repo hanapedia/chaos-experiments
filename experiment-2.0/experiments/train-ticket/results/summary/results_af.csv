@@ -1,0 +1,15 @@
+rootcause,faulttype,injectionver,pattern,score,in,out,localizedat
+basic,delay,0414,"travel,ui-dashboard,basic,food,station,security,order-other,preserve,ticketinfo,route-plan,travel2,","3.39,2.22,2.12,2.00,1.52,1.40,1.38,0.92,0.77,0.71,0.16,","0,0,16,12,9,1,0,0,21,0,7,","16,12,0,0,0,8,9,5,16,7,5,",3
+basic,delay,0420,"basic,travel,route-plan,ui-dashboard,ticketinfo,inside-payment,","9.29,6.98,0.88,0.64,0.37,0.26,","25,0,0,0,26,2,","0,22,4,4,25,0,",1
+order-other,delay,0414,"order-other,ui-dashboard,preserve,order,security,","10.57,3.97,3.43,2.34,0.24,","32,0,0,17,16,","0,28,15,0,17,",1
+order-other,delay,0420,"order-other,ui-dashboard,inside-payment,","43.57,24.67,1.27,","66,0,8,","0,70,0,",1
+route,delay,0414,"route,route-plan,travel,","7.42,6.91,2.84,","39,0,0,","0,19,20,",1
+route,delay,0421,,,,,-1
+security,delay,0421,"cancel,consign,inside-payment,ui-dashboard,","0.33,0.33,0.12,0.05,","0,2,1,0,","1,0,0,2,",-1
+station,delay,0402,"cancel,inside-payment,travel2,route-plan,","1.04,0.74,0.55,0.38,","0,7,9,0,","5,0,0,8,",-1
+station,delay,0414,"security,order-other,station,order,","2.44,2.21,0.74,0.61,","1,0,14,11,","11,14,0,0,",3
+station,delay,0421,"cancel,inside-payment,ui-dashboard,order,station,","1.88,1.81,0.14,0.09,0.01,","2,7,0,0,1,","5,0,4,1,0,",5
+ticketinfo,delay,0414,"preserve,ticketinfo,order,order-other,travel,station,route-plan,security,","8.27,3.41,2.70,2.29,1.63,1.36,1.15,0.76,","0,24,19,0,0,11,0,17,","23,0,0,11,13,0,8,15,",2
+ticketinfo,delay,0421,"cancel,inside-payment,ui-dashboard,","2.67,1.67,0.02,","0,5,0,","4,0,1,",-1
+train,delay,0414,"security,preserve,order-other,","5.43,3.58,1.96,","0,0,0,","15,10,11,",-1
+user,delay,0421,"cancel,inside-payment,ui-dashboard,","1.00,0.69,0.04,","2,3,0,","3,0,2,",-1

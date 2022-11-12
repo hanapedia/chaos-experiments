@@ -1,0 +1,1 @@
+{('cancel', 'user'): ['http_status'], ('gateway', 'preserve'): ['http_status'], ('gateway', 'preserve-other'): ['http_status'], ('preserve', 'user'): ['http_status'], ('preserve-other', 'food'): ['latency'], ('preserve-other', 'user'): ['http_status'], ('seat', 'order-other'): ['cpu_use']}

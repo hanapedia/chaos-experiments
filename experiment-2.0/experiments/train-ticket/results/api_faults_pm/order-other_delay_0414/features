@@ -1,0 +1,1 @@
+{('cancel', 'order'): ['latency'], ('route-plan', 'travel2'): ['http_status'], ('travel2', 'order-other'): ['http_status'], ('ui-dashboard', 'order-other'): ['http_status']}

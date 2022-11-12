@@ -1,0 +1,1 @@
+{('gateway', 'order-other'): ['cpu_use'], ('gateway', 'preserve'): ['latency', 'http_status'], ('gateway', 'preserve-other'): ['latency', 'http_status'], ('preserve', 'security'): ['http_status'], ('preserve-other', 'security'): ['http_status'], ('seat', 'order-other'): ['cpu_use']}

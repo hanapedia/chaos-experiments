@@ -1,0 +1,1 @@
+{('admin-basic-info', 'contacts'): ['latency'], ('admin-basic-info', 'station'): ['latency'], ('gateway', 'admin-basic-info'): ['latency'], ('gateway', 'cancel'): ['latency']}

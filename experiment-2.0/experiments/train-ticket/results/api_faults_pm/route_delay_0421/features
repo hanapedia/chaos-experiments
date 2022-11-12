@@ -1,0 +1,1 @@
+{('food', 'travel'): ['latency'], ('seat', 'travel'): ['latency'], ('travel', 'route'): ['latency']}

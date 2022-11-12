@@ -1,0 +1,1 @@
+{('cancel', 'notification'): ['latency'], ('gateway', 'food'): ['latency', 'cpu_use', 'http_status'], ('preserve', 'food'): ['latency', 'cpu_use'], ('preserve-other', 'food'): ['latency', 'cpu_use']}

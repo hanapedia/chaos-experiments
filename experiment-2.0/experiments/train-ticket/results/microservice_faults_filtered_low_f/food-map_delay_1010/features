@@ -1,0 +1,1 @@
+{('cancel', 'notification'): ['cpu_use'], ('food', 'food-map'): ['latency'], ('gateway', 'food'): ['latency', 'http_status'], ('preserve', 'notification'): ['cpu_use'], ('travel', 'ticketinfo'): ['cpu_use'], ('travel-plan', 'ticketinfo'): ['cpu_use'], ('travel2', 'ticketinfo'): ['cpu_use']}

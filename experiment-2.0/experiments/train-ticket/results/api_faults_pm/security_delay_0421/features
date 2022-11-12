@@ -1,0 +1,1 @@
+{('food', 'travel'): ['latency'], ('preserve', 'food'): ['latency'], ('preserve-other', 'food'): ['latency'], ('preserve-other', 'seat'): ['latency'], ('preserve-other', 'travel2'): ['latency'], ('seat', 'travel'): ['latency'], ('travel', 'route'): ['latency'], ('ui-dashboard', 'consign'): ['latency']}

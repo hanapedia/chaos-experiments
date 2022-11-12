@@ -1,0 +1,28 @@
+# vim: set filetype=yaml.ansible :
+---
+- name: Set up chaos experiment
+  hosts: localhost
+  tasks:
+    - name: Prepare directories
+      block:
+        - name: parent directory for api faults
+          ansible.builtin.file:
+            path: "./{{ item }}"
+            state: directory
+            mode: '1777'
+          with_items: ['microservice_faults_par_met']
+
+        - name: get subdirectory names
+          ansible.builtin.command: "ls ./datasets/A/{{ item }}"
+          register: faults
+          changed_when: false
+          with_items: ['microservice_faults']
+
+        - name: create subdirectories
+          ansible.builtin.file:
+            path: "./{{ item[0] }}/{{ item[1].split('.')[0] }}"
+            state: directory
+            mode: '1777'
+          with_nested:
+            - ['microservice_faults_par_met']
+            - "{{ faults.results[0].stdout_lines }}"

@@ -1,0 +1,1 @@
+{('basic', 'route'): ['latency'], ('cancel', 'order'): ['latency'], ('food', 'travel'): ['latency'], ('route-plan', 'route'): ['latency', 'http_status'], ('seat', 'travel'): ['latency'], ('seat', 'travel2'): ['latency'], ('travel', 'route'): ['latency', 'http_status'], ('travel2', 'route'): ['latency']}

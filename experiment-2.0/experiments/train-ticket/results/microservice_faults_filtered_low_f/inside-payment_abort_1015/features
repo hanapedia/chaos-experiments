@@ -1,0 +1,1 @@
+{('gateway', 'inside-payment'): ['http_status'], ('seat', 'order-other'): ['cpu_use'], ('security', 'order-other'): ['cpu_use'], ('travel2', 'order-other'): ['cpu_use']}

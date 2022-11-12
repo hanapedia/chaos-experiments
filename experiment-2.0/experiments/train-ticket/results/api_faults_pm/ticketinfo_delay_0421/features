@@ -1,0 +1,1 @@
+{('preserve', 'food'): ['latency'], ('preserve', 'station'): ['latency'], ('preserve-other', 'food'): ['latency'], ('preserve-other', 'seat'): ['latency'], ('preserve-other', 'ticketinfo'): ['latency'], ('preserve-other', 'travel2'): ['latency'], ('ui-dashboard', 'inside-payment'): ['http_status']}

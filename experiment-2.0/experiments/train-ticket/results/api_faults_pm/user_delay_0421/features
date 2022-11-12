@@ -1,0 +1,1 @@
+{('basic', 'train'): ['latency'], ('cancel', 'order-other'): ['latency'], ('food', 'food-map'): ['latency'], ('preserve', 'food'): ['latency'], ('preserve', 'user'): ['latency'], ('preserve-other', 'food'): ['latency'], ('seat', 'travel'): ['latency'], ('seat', 'travel2'): ['latency'], ('travel', 'train'): ['latency'], ('ui-dashboard', 'cancel'): ['latency']}

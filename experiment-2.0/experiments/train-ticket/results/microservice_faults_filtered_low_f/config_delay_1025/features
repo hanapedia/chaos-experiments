@@ -1,0 +1,1 @@
+{('cancel', 'notification'): ['latency'], ('gateway', 'preserve'): ['latency', 'http_status'], ('gateway', 'travel'): ['latency'], ('gateway', 'travel-plan'): ['latency', 'http_status'], ('inside-payment', 'payment'): ['latency'], ('preserve', 'travel'): ['latency'], ('seat', 'config'): ['latency']}

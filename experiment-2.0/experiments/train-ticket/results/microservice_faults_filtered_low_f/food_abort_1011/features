@@ -1,0 +1,1 @@
+{('gateway', 'food'): ['cpu_use', 'http_status'], ('gateway', 'preserve'): ['http_status'], ('preserve', 'food'): ['cpu_use', 'http_status']}

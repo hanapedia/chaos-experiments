@@ -1,0 +1,1 @@
+{('auth', 'verification-code'): ['latency'], ('basic', 'station'): ['latency'], ('basic', 'train'): ['latency', 'http_status'], ('route-plan', 'travel'): ['latency'], ('ticketinfo', 'basic'): ['latency', 'http_status'], ('travel', 'route'): ['latency'], ('travel', 'ticketinfo'): ['latency', 'http_status'], ('travel-plan', 'route-plan'): ['latency']}

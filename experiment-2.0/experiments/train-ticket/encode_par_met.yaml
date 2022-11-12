@@ -1,0 +1,40 @@
+# vim: set filetype=yaml.ansible :
+---
+- name: Set up chaos experiment
+  hosts: localhost
+  tasks:
+    - name: Encode trace to invocations
+      block:
+        - name: get subdirectory names
+          ansible.builtin.command: "ls ./datasets/A/{{ item }}"
+          register: faults
+          changed_when: false
+          with_items: ['microservice_faults']
+
+        - name: run python script for encoding
+          ansible.builtin.command:
+            creates: "./microservice_faults_par_metrics/{{ item[1].split('.')[0] }}/invocation.pkl"
+            argv:
+              - python
+              - ./files/run_trace_encoding.py
+              - -i
+              - "./datasets/A/{{ item[0] }}/{{ item[1] }}"
+              - -o
+              - "./microservice_faults_par_met/{{ item[1].split('.')[0] }}/invocation.pkl"
+          with_nested:
+            - ['microservice_faults']
+            - "{{ faults.results[0].stdout_lines }}"
+
+        - name: run python script for encoding
+          ansible.builtin.command:
+            creates: "./{{ item[0] }}/{{ item[1] }}"
+            argv:
+              - python
+              - ./files/run_trace_encoding.py
+              - -i
+              - "./datasets/A/uninjection/{{ item[1] }}.pkl"
+              - -o
+              - "./{{ item[0] }}/{{ item[1] }}_par_met.pkl"
+          with_nested:
+            - ['historical_data']
+            - ['1', '2']

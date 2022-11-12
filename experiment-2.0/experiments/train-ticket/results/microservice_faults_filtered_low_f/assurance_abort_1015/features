@@ -1,0 +1,1 @@
+{('gateway', 'assurance'): ['cpu_use', 'http_status'], ('travel2', 'route'): ['latency']}

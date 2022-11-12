@@ -1,0 +1,1 @@
+{('gateway', 'assurance'): ['http_status'], ('gateway', 'auth'): ['latency', 'cpu_use', 'http_status'], ('gateway', 'contacts'): ['cpu_use'], ('gateway', 'food'): ['cpu_use'], ('gateway', 'preserve'): ['cpu_use'], ('preserve', 'food'): ['cpu_use'], ('security', 'order-other'): ['cpu_use']}

@@ -1,0 +1,1 @@
+{('basic', 'train'): ['latency', 'http_status'], ('seat', 'travel'): ['latency'], ('seat', 'travel2'): ['latency'], ('travel', 'ticketinfo'): ['http_status'], ('travel', 'train'): ['latency'], ('travel2', 'train'): ['latency']}

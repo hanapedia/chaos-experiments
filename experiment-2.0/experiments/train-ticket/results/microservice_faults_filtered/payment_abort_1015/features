@@ -1,0 +1,1 @@
+{('gateway', 'inside-payment'): ['http_status'], ('inside-payment', 'payment'): ['http_status']}

@@ -1,0 +1,1 @@
+{('auth', 'verification-code'): ['http_status'], ('gateway', 'assurance'): ['http_status'], ('gateway', 'auth'): ['latency', 'http_status'], ('gateway', 'ts-ui-dashboard'): ['http_status'], ('gateway', 'verification-code'): ['http_status'], ('travel', 'ticketinfo'): ['cpu_use'], ('travel2', 'ticketinfo'): ['cpu_use']}

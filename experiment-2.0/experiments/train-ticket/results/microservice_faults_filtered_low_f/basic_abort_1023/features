@@ -1,0 +1,1 @@
+{('gateway', 'travel'): ['latency', 'http_status'], ('gateway', 'travel-plan'): ['latency', 'http_status'], ('route-plan', 'travel'): ['cpu_use', 'http_status'], ('ticketinfo', 'basic'): ['cpu_use', 'http_status'], ('travel', 'ticketinfo'): ['http_status'], ('travel-plan', 'route-plan'): ['latency', 'http_status']}

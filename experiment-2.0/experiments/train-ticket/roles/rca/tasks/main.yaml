@@ -1,0 +1,30 @@
+# vim: set filetype=yaml.ansible :
+---
+- name: Run chaos experiment
+  block:
+    - name: get subdirectory names
+      ansible.builtin.command: "ls ./{{ root_path }}/{{ item.name }}"
+      register: faults
+      changed_when: false
+      loop: "{{ fault_types }}"
+
+    - name: Prepare empty list
+      ansible.builtin.set_fact:
+        faults_combined: []
+
+    - name: Create combined variable
+      ansible.builtin.set_fact:
+        faults_combined: "{{ faults_combined + [item | combine(faults.results[index])] }}"
+      loop: "{{ fault_types }}"
+      loop_control:
+        index_var: index
+
+    - name: Run rca
+      with_subelements:
+        - "{{ faults_combined }}"
+        - stdout_lines
+      vars:
+        path_root: "{{ root_path }}/{{ item.0.name }}/{{ item.1.split('.')[0] }}"
+      ansible.builtin.command:
+        creates: "{{ path_root }}/results.pkl"
+        cmd: "python ./files/run_tracerca.py -p {{ path_root }} -i {{ path_root }}/invocation.pkl -o {{ path_root }}/results.pkl {{ history_files }} -l {{ path_root }}/results.log -a"

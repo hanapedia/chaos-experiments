@@ -1,0 +1,1 @@
+{('cancel', 'inside-payment'): ['cpu_use'], ('gateway', 'assurance'): ['latency', 'http_status'], ('gateway', 'preserve'): ['latency'], ('gateway', 'preserve-other'): ['latency'], ('inside-payment', 'order-other'): ['latency'], ('preserve', 'assurance'): ['latency'], ('preserve-other', 'assurance'): ['latency'], ('preserve-other', 'order-other'): ['cpu_use']}

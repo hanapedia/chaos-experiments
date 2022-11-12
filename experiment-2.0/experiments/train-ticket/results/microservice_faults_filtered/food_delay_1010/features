@@ -1,0 +1,1 @@
+{('gateway', 'food'): ['latency', 'http_status'], ('gateway', 'preserve'): ['latency'], ('preserve', 'food'): ['latency'], ('seat', 'travel2'): ['latency']}

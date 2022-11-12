@@ -1,0 +1,1 @@
+{('gateway', 'admin-basic-info'): ['latency', 'http_status'], ('gateway', 'contacts'): ['latency', 'http_status'], ('gateway', 'preserve'): ['latency'], ('gateway', 'preserve-other'): ['latency'], ('preserve', 'contacts'): ['latency'], ('preserve-other', 'travel2'): ['cpu_use']}

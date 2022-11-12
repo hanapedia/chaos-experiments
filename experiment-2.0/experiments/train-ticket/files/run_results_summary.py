@@ -9,12 +9,11 @@ from collections import defaultdict
 
 @click.command("Summarize the experiment results")
 @click.option("-r", "--results_folder", "results_folders", required=True, multiple=True, type=str)
-@click.option("-oc", "--output_csv", "output_csv", default="./summary/results.csv", type=str)
-@click.option("-op", "--output_pickle", "output_pickle", default="./summary/results.pkl", type=str)
-def result_summary(output_csv, output_pickle, results_folders):
+@click.option("-o", "--output", "output", default="./summary/results", type=str)
+def result_summary(output, results_folders):
     df = pd.DataFrame()
     for results_folder in results_folders:
-        for results in  os.listdir(results_folder):
+        for results in os.listdir(results_folder):
             summary = summarize(results, results_folder)
             df = pd.concat([df, summary])
 
@@ -23,16 +22,26 @@ def result_summary(output_csv, output_pickle, results_folders):
     # pp = pprint.PrettyPrinter()
     # pp.pprint(df.sort_index())
     df = df.sort_index()
-    with open(output_pickle, "+wb") as f:
+    with open(output + '.pkl', "+wb") as f:
         pickle.dump(df, f)
 
-    df.to_csv(output_csv)
+    df.to_csv(output + '.csv')
 
 def summarize(results, results_folder):
-    filePath = os.path.join(results_folder, results, "result.log")
-    if not os.path.isfile(filePath):
-        return pd.DataFrame()
+    filePath = os.path.join(results_folder, results, "results.log")
     summary = defaultdict(list)
+    print(filePath)
+
+    if not os.path.isfile(filePath):
+        print(os.path.isfile(filePath))
+        dirnameList = results.split("_")
+        summary['rootcause'] = [dirnameList[0]]
+        summary['faulttype'] = [dirnameList[1]]
+        summary['injectionver'] = [dirnameList[2]]
+        summary['localizedat'] = [-1]
+        df = pd.DataFrame.from_dict(summary).set_index(keys=['rootcause','faulttype','injectionver'], drop=True)
+        return df
+
     ranking = list()
     keysList = list()
     summaryItems = ''
@@ -49,6 +58,7 @@ def summarize(results, results_folder):
                 keysList.extend([line_el[5],line_el[4],line_el[12],line_el[13]])
                 continue
 
+            print(line_el[4])
             if float(line_el[4]) > 0:
                 summaryItems += "%s," % (line_el[5])
                 summaryScores += "%s," % (line_el[4])

@@ -1,0 +1,11 @@
+rootcause,faulttype,injectionver,pattern,score,in,out,localizedat
+basic,delay,0415,"basic,travel,ticketinfo,train,seat,travel-plan,","7.09,5.87,2.91,0.50,0.45,0.44,","12,0,16,1,0,0,","0,11,12,0,1,1,",1
+route,delay,0415,"route,travel,seat,train,ticketinfo,","27.74,18.79,8.61,2.67,0.92,","31,10,0,3,16,","0,31,10,0,17,",1
+ticketinfo,delay,0402,"travel2,","2.05,","9,","0,",-1
+ticketinfo,delay,0430,"inside-payment,","6.76,","13,","0,",-1
+train,delay,0415,"station,ui-dashboard,travel-plan,basic,travel,ticketinfo,route-plan,","7.83,3.33,3.05,1.50,0.81,0.75,0.38,","12,0,0,15,15,14,8,","0,10,8,13,14,15,7,",-1
+train,delay,0429,"train,seat,","2.44,1.83,","4,1,","0,4,",1
+train,delay,0430,"train,seat,travel,ticketinfo,basic,","26.21,10.24,6.00,3.03,2.28,","38,7,18,15,11,","0,25,27,11,14,",1
+travel,delay,0415,"travel,basic,station,route-plan,ui-dashboard,travel-plan,ticketinfo,seat,","127.80,89.56,16.11,5.44,2.25,1.55,0.93,0.27,","0,137,49,0,0,0,138,4,","135,41,0,14,4,4,137,6,",1
+travel-plan,delay,0430,"inside-payment,","32.18,","59,","0,",-1
+user,delay,0430,"train,seat,basic,travel,route-plan,","5.85,4.55,3.20,1.45,1.20,","9,4,4,11,0,","0,11,0,13,2,",-1

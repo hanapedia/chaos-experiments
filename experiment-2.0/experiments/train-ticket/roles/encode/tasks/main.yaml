@@ -1,0 +1,128 @@
+# vim: set filetype=yaml.ansible :
+---
+- name: Trace encoding
+  block:
+    - name: set facts
+      block:
+        - name: get subdirectories
+          ansible.builtin.command: "ls ./datasets/A/{{ item.source }}"
+          register: faults
+          changed_when: false
+          with_items: "{{ fault_types }}"
+
+        - name: get subdirectory names
+          ansible.builtin.command: "ls ./datasets/A/uninjection"
+          register: history
+          changed_when: false
+
+        - name: Prepare empty list
+          ansible.builtin.set_fact:
+            faults_combined: []
+
+        - name: Create combined variable
+          ansible.builtin.set_fact:
+            faults_combined: "{{ faults_combined + [item | combine(faults.results[index])] }}"
+          loop: "{{ fault_types }}"
+          loop_control:
+            index_var: index
+
+    - name: Filter data
+      when: filter
+      block:
+        - name: create directory for filtered dataset
+          ansible.builtin.file:
+            path: ./datasets/filtered
+            state: directory
+            mode: '1777'
+
+        - name: create subdirectory for filtered dataset
+          ansible.builtin.file:
+            path: "./datasets/filtered/{{ experiment_prefix }}"
+            state: directory
+            mode: '1777'
+
+        - name: create subdirectories
+          ansible.builtin.file:
+            path: "./datasets/filtered/{{ experiment_prefix }}/{{ item.name }}/"
+            state: directory
+            mode: '1777'
+          loop: "{{ faults_combined }}"
+
+        - name: parent directory for historical data
+          ansible.builtin.file:
+            path: "./datasets/filtered/{{ experiment_prefix }}/historical_data"
+            state: directory
+            mode: '1777'
+
+        - name: run filter script
+          ansible.builtin.command:
+            creates: "./datasets/filtered/{{ experiment_prefix }}/{{ item.0.name }}/{{ item.1 }}"
+            cmd: "python ./files/run_dataset_filter.py -i ./datasets/A/{{ item.0.source }}/{{ item.1 }} -o ./datasets/filtered/{{ experiment_prefix }}/{{ item.0.name }}/{{ item.1 }} {{ filter_key }}"
+          with_subelements:
+            - "{{ faults_combined }}"
+            - stdout_lines
+
+        - name: run filter script for historical data
+          ansible.builtin.command:
+            creates: "./datasets/filtered/{{ experiment_prefix }}/historical_data/{{ item }}"
+            cmd: "python ./files/run_dataset_filter.py -i ./datasets/A/uninjection/{{ item }} -o ./datasets/filtered/{{ experiment_prefix }}/historical_data/{{ item }} {{ filter_key }}"
+          loop: "{{ history.stdout_lines }}"
+
+        - name: run python script for encoding
+          ansible.builtin.command:
+            creates: "./{{ root_path }}/{{ item.0.name }}/{{ item.1.split('.')[0] }}/invocation.pkl"
+            argv:
+              - python
+              - ./files/run_trace_encoding.py
+              - -i
+              - "./datasets/filtered/{{ experiment_prefix }}/{{ item.0.name }}/{{ item.1 }}"
+              - -o
+              - "./{{ root_path }}/{{ item.0.name }}/{{ item.1.split('.')[0] }}/invocation.pkl"
+              - -a
+          with_subelements:
+            - "{{ faults_combined }}"
+            - stdout_lines
+
+        - name: run python script for encoding
+          ansible.builtin.command:
+            creates: "./{{ root_path }}/historical_data/{{ experiment_prefix }}/{{ item }}"
+            argv:
+              - python
+              - ./files/run_trace_encoding.py
+              - -i
+              - "./datasets/filtered/{{ experiment_prefix }}/historical_data/{{ item }}"
+              - -o
+              - "./{{ root_path }}/historical_data/{{ experiment_prefix }}/{{ item }}"
+              - -a
+          loop: "{{ history.stdout_lines }}"
+
+    - name: Encode without filtering
+      when: not filter
+      block:
+        - name: run python script for encoding
+          ansible.builtin.command:
+            creates: "./{{ root_path }}/{{ item.0.name }}/{{ item.1.split('.')[0] }}/invocation.pkl"
+            argv:
+              - python
+              - ./files/run_trace_encoding.py
+              - -i
+              - "./datasets/A/{{ item.0.source }}/{{ item.1 }}"
+              - -o
+              - "./{{ root_path }}/{{ item.0.name }}/{{ item.1.split('.')[0] }}/invocation.pkl"
+              - -a
+          with_subelements:
+            - "{{ faults_combined }}"
+            - stdout_lines
+
+        - name: run python script for encoding
+          ansible.builtin.command:
+            creates: "./{{ root_path }}/historical_data/{{ experiment_prefix }}/{{ item }}"
+            argv:
+              - python
+              - ./files/run_trace_encoding.py
+              - -i
+              - "./datasets/A/uninjection/{{ item }}"
+              - -o
+              - "./{{ root_path }}/historical_data/{{ experiment_prefix }}/{{ item }}"
+              - -a
+          loop: "{{ history.stdout_lines }}"

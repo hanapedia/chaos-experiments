@@ -1,0 +1,1 @@
+{('gateway', 'preserve'): ['latency', 'cpu_use'], ('preserve', 'ticketinfo'): ['cpu_use'], ('security', 'order'): ['latency'], ('travel', 'ticketinfo'): ['cpu_use'], ('travel-plan', 'ticketinfo'): ['cpu_use'], ('travel2', 'ticketinfo'): ['cpu_use']}

@@ -1,0 +1,15 @@
+rootcause,faulttype,injectionver,pattern,score,in,out,localizedat
+basic,delay,0414,"travel,train,ticketinfo,basic,","113.49,90.60,8.12,2.63,","0,117,127,118,","122,0,118,115,",4
+basic,delay,0420,"basic,travel,ticketinfo,","60.34,49.90,1.89,","64,0,66,","0,62,64,",1
+order-other,delay,0414,"order-other,ui-dashboard,","11.12,2.38,","31,0,","0,27,",1
+order-other,delay,0420,"order-other,ui-dashboard,","59.42,29.91,","72,0,","0,70,",1
+route,delay,0414,"route,travel,basic,route-plan,order,","40.14,17.87,14.86,6.93,0.56,","89,27,0,0,2,","0,72,39,19,0,",1
+route,delay,0421,"seat,","18.75,","0,","24,",-1
+security,delay,0421,"route,seat,","9.33,6.83,","14,2,","0,13,",-1
+station,delay,0402,"travel2,","3.14,","12,","0,",-1
+station,delay,0414,,,,,-1
+station,delay,0421,"preserve,","17.64,","0,","21,",-1
+ticketinfo,delay,0414,,,,,-1
+ticketinfo,delay,0421,,,,,-1
+train,delay,0414,,,,,-1
+user,delay,0421,"seat,train,basic,","20.80,18.40,16.80,","0,23,0,","26,0,21,",-1
