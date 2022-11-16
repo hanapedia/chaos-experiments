@@ -20,6 +20,7 @@
             faults_combined: []
 
         - name: Create combined variable
+          no_log: true
           ansible.builtin.set_fact:
             faults_combined: "{{ faults_combined + [item | combine(faults.results[index])] }}"
           loop: "{{ fault_types }}"
@@ -42,6 +43,7 @@
             mode: '1777'
 
         - name: create subdirectories
+          no_log: true
           ansible.builtin.file:
             path: "./datasets/filtered/{{ experiment_prefix }}/{{ item.name }}/"
             state: directory
@@ -55,6 +57,7 @@
             mode: '1777'
 
         - name: run filter script
+          no_log: true
           ansible.builtin.command:
             creates: "./datasets/filtered/{{ experiment_prefix }}/{{ item.0.name }}/{{ item.1 }}"
             cmd: "python ./files/run_dataset_filter.py -i ./datasets/A/{{ item.0.source }}/{{ item.1 }} -o ./datasets/filtered/{{ experiment_prefix }}/{{ item.0.name }}/{{ item.1 }} {{ filter_key }}"
@@ -63,12 +66,14 @@
             - stdout_lines
 
         - name: run filter script for historical data
+          no_log: true
           ansible.builtin.command:
             creates: "./datasets/filtered/{{ experiment_prefix }}/historical_data/{{ item }}"
-            cmd: "python ./files/run_dataset_filter.py -i ./datasets/A/uninjection/{{ item }} -o ./datasets/filtered/{{ experiment_prefix }}/historical_data/{{ item }} {{ filter_key }}"
+            cmd: "python ./files/run_dataset_filter.py -i ./datasets/A/uninjection/{{ item }} -o ./datasets/filtered/{{ experiment_prefix }}/historical_data/{{ item }} {{ filter_key }} {{ filter_size }}"
           loop: "{{ history.stdout_lines }}"
 
         - name: run python script for encoding
+          no_log: true
           ansible.builtin.command:
             creates: "./{{ root_path }}/{{ item.0.name }}/{{ item.1.split('.')[0] }}/invocation.pkl"
             argv:
@@ -83,7 +88,8 @@
             - "{{ faults_combined }}"
             - stdout_lines
 
-        - name: run python script for encoding
+        - name: run python script for encoding historical data
+          no_log: true
           ansible.builtin.command:
             creates: "./{{ root_path }}/historical_data/{{ experiment_prefix }}/{{ item }}"
             argv:
@@ -100,6 +106,7 @@
       when: not filter
       block:
         - name: run python script for encoding
+          no_log: true
           ansible.builtin.command:
             creates: "./{{ root_path }}/{{ item.0.name }}/{{ item.1.split('.')[0] }}/invocation.pkl"
             argv:
@@ -115,6 +122,7 @@
             - stdout_lines
 
         - name: run python script for encoding
+          no_log: true
           ansible.builtin.command:
             creates: "./{{ root_path }}/historical_data/{{ experiment_prefix }}/{{ item }}"
             argv:

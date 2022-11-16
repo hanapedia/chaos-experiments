@@ -3,6 +3,7 @@
 - name: Experiment setup
   block:
     - name: parent directory for api faults
+      no_log: true
       ansible.builtin.file:
         path: "./{{ root_path }}/{{ item.name }}"
         state: directory
@@ -27,6 +28,7 @@
         index_var: index
 
     - name: create subdirectories
+      no_log: true
       ansible.builtin.file:
         path: "./{{ root_path }}/{{ item.0.name }}/{{ item.1.split('.')[0] }}"
         state: directory

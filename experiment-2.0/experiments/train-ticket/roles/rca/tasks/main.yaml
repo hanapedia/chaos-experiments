@@ -13,13 +13,19 @@
         faults_combined: []
 
     - name: Create combined variable
+      no_log: true
       ansible.builtin.set_fact:
         faults_combined: "{{ faults_combined + [item | combine(faults.results[index])] }}"
       loop: "{{ fault_types }}"
       loop_control:
         index_var: index
 
+    - name: Check history input
+      ansible.builtin.debug:
+        var: history_files
+
     - name: Run rca
+      no_log: true
       with_subelements:
         - "{{ faults_combined }}"
         - stdout_lines
