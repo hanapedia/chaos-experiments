@@ -1,0 +1,1 @@
+{('cancel', 'inside-payment'): ['cpu_use'], ('cancel', 'notification'): ['latency'], ('gateway', 'cancel'): ['latency'], ('gateway', 'preserve'): ['latency'], ('gateway', 'preserve-other'): ['latency']}

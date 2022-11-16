@@ -1,0 +1,1 @@
+{('admin-travel', 'travel'): ['cpu_use'], ('admin-travel', 'travel2'): ['cpu_use'], ('gateway', 'cancel'): ['latency']}

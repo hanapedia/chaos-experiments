@@ -1,0 +1,1 @@
+{('admin-basic-info', 'contacts'): ['latency'], ('admin-basic-info', 'station'): ['latency'], ('food', 'food-map'): ['latency'], ('gateway', 'food'): ['latency', 'http_status'], ('travel-plan', 'ticketinfo'): ['latency']}

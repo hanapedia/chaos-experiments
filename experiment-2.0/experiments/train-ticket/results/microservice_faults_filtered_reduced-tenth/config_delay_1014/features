@@ -1,0 +1,1 @@
+{('gateway', 'preserve'): ['latency'], ('gateway', 'travel'): ['latency'], ('preserve', 'order'): ['latency'], ('preserve', 'seat'): ['latency'], ('preserve', 'travel'): ['latency'], ('seat', 'config'): ['latency'], ('travel', 'seat'): ['latency']}

@@ -1,0 +1,1 @@
+{('auth', 'verification-code'): ['latency', 'cpu_use'], ('gateway', 'cancel'): ['cpu_use'], ('gateway', 'ts-ui-dashboard'): ['http_status'], ('gateway', 'verification-code'): ['latency', 'cpu_use'], ('preserve', 'user'): ['latency', 'cpu_use'], ('preserve-other', 'user'): ['latency', 'cpu_use']}

@@ -1,0 +1,1 @@
+{('admin-basic-info', 'train'): ['latency'], ('admin-user', 'user'): ['latency'], ('cancel', 'notification'): ['latency'], ('gateway', 'preserve'): ['latency', 'http_status'], ('gateway', 'travel'): ['latency'], ('preserve', 'seat'): ['latency'], ('preserve', 'travel'): ['latency'], ('travel', 'seat'): ['latency']}

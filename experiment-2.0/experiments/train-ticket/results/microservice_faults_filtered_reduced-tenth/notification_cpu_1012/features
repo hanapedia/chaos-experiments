@@ -1,0 +1,1 @@
+{('cancel', 'notification'): ['cpu_use'], ('preserve', 'notification'): ['cpu_use'], ('preserve-other', 'notification'): ['cpu_use'], ('preserve-other', 'order-other'): ['cpu_use'], ('travel', 'ticketinfo'): ['cpu_use']}

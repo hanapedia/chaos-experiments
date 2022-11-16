@@ -1,0 +1,1 @@
+{('admin-user', 'user'): ['latency', 'cpu_use'], ('cancel', 'order-other'): ['cpu_use'], ('cancel', 'user'): ['latency', 'cpu_use'], ('gateway', 'admin-order'): ['http_status'], ('gateway', 'order-other'): ['http_status'], ('preserve', 'user'): ['latency', 'cpu_use'], ('preserve-other', 'user'): ['latency', 'cpu_use'], ('travel-plan', 'route-plan'): ['cpu_use']}

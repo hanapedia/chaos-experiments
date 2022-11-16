@@ -1,0 +1,1 @@
+{('admin-order', 'order-other'): ['latency'], ('auth', 'verification-code'): ['latency', 'cpu_use'], ('gateway', 'travel-plan'): ['latency'], ('gateway', 'verification-code'): ['latency', 'cpu_use'], ('security', 'order-other'): ['latency']}

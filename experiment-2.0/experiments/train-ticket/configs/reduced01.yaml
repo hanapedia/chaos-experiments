@@ -1,0 +1,14 @@
+experiment_prefix: reduced-tenth
+fault_types:
+  # - name: api_faults_filtered
+  #   source: api_faults
+  # - name: container_faults_filtered
+  #   source: container_faults
+  - name: "microservice_faults_{{ experiment_prefix }}"
+    source: microservice_faults
+root_path: results
+filter: true
+filter_key: ''
+filter_size: -s 0.1
+
+history_files: "-h ./results/historical_data/{{ experiment_prefix }}/3.pkl -h ./results/historical_data/{{ experiment_prefix }}/4.pkl"

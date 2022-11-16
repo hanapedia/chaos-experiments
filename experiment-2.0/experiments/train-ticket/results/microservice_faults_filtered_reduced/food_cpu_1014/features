@@ -1,0 +1,1 @@
+{('gateway', 'food'): ['latency', 'cpu_use', 'http_status'], ('inside-payment', 'order'): ['latency'], ('preserve', 'food'): ['latency', 'cpu_use'], ('seat', 'order-other'): ['latency']}

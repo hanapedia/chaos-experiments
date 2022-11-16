@@ -1,0 +1,1 @@
+{('cancel', 'user'): ['latency'], ('gateway', 'cancel'): ['latency'], ('gateway', 'order'): ['http_status'], ('gateway', 'preserve'): ['latency'], ('gateway', 'preserve-other'): ['latency'], ('preserve', 'user'): ['latency'], ('preserve-other', 'ticketinfo'): ['latency'], ('preserve-other', 'user'): ['latency']}

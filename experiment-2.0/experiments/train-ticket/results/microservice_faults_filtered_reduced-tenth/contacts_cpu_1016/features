@@ -1,0 +1,1 @@
+{('admin-travel', 'travel'): ['cpu_use'], ('gateway', 'contacts'): ['latency', 'cpu_use', 'http_status'], ('preserve', 'contacts'): ['latency', 'cpu_use'], ('travel', 'seat'): ['latency']}

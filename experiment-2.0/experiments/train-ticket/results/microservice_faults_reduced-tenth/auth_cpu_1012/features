@@ -1,0 +1,1 @@
+{('gateway', 'assurance'): ['http_status'], ('gateway', 'auth'): ['latency', 'cpu_use', 'http_status'], ('gateway', 'ts-ui-dashboard'): ['http_status']}

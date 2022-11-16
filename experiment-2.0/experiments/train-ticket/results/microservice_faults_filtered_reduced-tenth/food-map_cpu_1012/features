@@ -1,0 +1,1 @@
+{('food', 'food-map'): ['latency', 'cpu_use'], ('gateway', 'food'): ['latency', 'http_status'], ('travel2', 'seat'): ['latency']}

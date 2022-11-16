@@ -1,0 +1,1 @@
+{('gateway', 'assurance'): ['latency', 'cpu_use'], ('preserve', 'assurance'): ['latency', 'cpu_use'], ('preserve-other', 'assurance'): ['latency', 'cpu_use']}
