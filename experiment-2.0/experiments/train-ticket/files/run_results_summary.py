@@ -5,35 +5,39 @@ import csv
 import pprint 
 import pandas as pd
 from collections import defaultdict
+from pathlib import Path
 
 
 @click.command("Summarize the experiment results")
-@click.option("-r", "--results_folder", "results_folders", required=True, multiple=True, type=str)
-@click.option("-o", "--output", "output", default="./summary/results", type=str)
-def result_summary(output, results_folders):
+@click.option("-r", "--results_folder", "results_folder_name", required=True, type=str)
+def result_summary(results_folder_name):
     df = pd.DataFrame()
-    for results_folder in results_folders:
-        for results in os.listdir(results_folder):
-            summary = summarize(results, results_folder)
-            df = pd.concat([df, summary])
+    results_folder = Path(f'./results/{results_folder_name}')
+    for results in os.listdir(results_folder):
+        summary = summarize(results, results_folder)
+        df = pd.concat([df, summary])
 
-    # df.set_index(keys=['rootcause', 'faulttype', 'injectionver'], drop=True).sort_index()
-    # df.reset_index(drop=True)
-    # pp = pprint.PrettyPrinter()
-    # pp.pprint(df.sort_index())
+    os.makedirs(Path(f'./summary/{results_folder_name}'), exist_ok=True)
+    output = Path(f'./summary/{results_folder_name}/{results_folder_name}_results.csv')
     df = df.sort_index()
-    with open(output + '.pkl', "+wb") as f:
-        pickle.dump(df, f)
+    df.to_csv(output)
 
-    df.to_csv(output + '.csv')
+    os.makedirs(Path(f'./localization_errors/{results_folder_name}'), exist_ok=True)
+    error_output = Path(f'./localization_errors/{results_folder_name}/errors.csv')
+    errornous = df.loc[df['localizedat'] != 1]
+    errornous.to_csv(error_output)
+
+    error_pkl = Path(f'./localization_errors/{results_folder_name}/errors.pkl')
+    with open(error_pkl, "wb") as f:
+        pickle.dump(errornous, f)
 
 def summarize(results, results_folder):
     filePath = os.path.join(results_folder, results, "results.log")
     summary = defaultdict(list)
-    print(filePath)
+    # print(filePath)
 
     if not os.path.isfile(filePath):
-        print(os.path.isfile(filePath))
+        # print(os.path.isfile(filePath))
         dirnameList = results.split("_")
         summary['rootcause'] = [dirnameList[0]]
         summary['faulttype'] = [dirnameList[1]]
@@ -58,7 +62,7 @@ def summarize(results, results_folder):
                 keysList.extend([line_el[5],line_el[4],line_el[12],line_el[13]])
                 continue
 
-            print(line_el[4])
+            # print(line_el[4])
             if float(line_el[4]) > 0:
                 summaryItems += "%s," % (line_el[5])
                 summaryScores += "%s," % (line_el[4])
@@ -75,10 +79,18 @@ def summarize(results, results_folder):
     summary['rootcause'] = [dirnameList[0]]
     summary['faulttype'] = [dirnameList[1]]
     summary['injectionver'] = [dirnameList[2]]
-    if dirnameList[0] in ranking:
-       rank = str(ranking.index(dirnameList[0]) + 1)
+    if len(dirnameList[0].split("+")) > 1:
+        ans = dirnameList[0].split("+")  
+        if ans[0] in ranking and ans[1] in ranking:
+            rank = max(ranking.index(ans[0]) + 1, ranking.index(ans[1]) + 1)
+            if rank == 2:
+                rank = 1
+        else:
+            rank = -1
+    elif dirnameList[0] in ranking:
+        rank = ranking.index(dirnameList[0]) + 1
     else:
-        rank = str(-1)
+        rank = -1
     summary['localizedat'] = [rank]
 
     df = pd.DataFrame.from_dict(summary).set_index(keys=['rootcause','faulttype','injectionver'], drop=True)
