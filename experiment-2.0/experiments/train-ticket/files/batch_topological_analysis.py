@@ -36,38 +36,9 @@ def run_anomaly_analysis(experiment_name):
 
         errornous_fault_results_dir = Path(f'./results/{experiment_name}/{ef}')
         topo = errornous_fault_summary_dir / 'topology.pkl' 
-        try:
-            _ = topo.resolve(strict=True)
-        except: 
-            invo = errornous_fault_results_dir / 'anomalies.pkl'
-            df = pd.DataFrame()
-            with open(invo, 'rb') as invo_f:
-                _df = pickle.load(invo_f)
-                df = pd.concat([df, _df])
-
-            features = errornous_fault_results_dir / 'features'
-            selected_features = {}
-            with open(features, 'r') as feat_f:
-                selected_features = eval("".join(feat_f.readlines()))
-
-            root_cause = [ef.split('_')[0]]
-            if '+' in root_cause[0]: 
-                root_cause = ef.split('_')[0].split('+')
-
-            predictions = list(filter(None, predictions.split(',')))
-
-            loc_err_conf = {
-                'selected_features': selected_features,
-                'root_cause': root_cause,
-                'predictions': predictions
-            }
-            topology.generate_topology(df, ('source','target'), loc_err_conf=loc_err_conf)
-            with open(topo, 'wb') as topo_f:
-                pickle.dump(topology.topology, topo_f)
-        else:
-            with open(topo, 'rb') as topo_f:
-                topo_obj = pickle.load(topo_f)
-            topology.set_topology(topo_obj)
+        with open(topo, 'rb') as topo_f:
+            topo_obj = pickle.load(topo_f)
+        topology.set_topology(topo_obj)
 
         output_csv = errornous_fault_summary_dir / f'{ef}_node_summary.csv'
         output_figure = errornous_fault_summary_dir / f'{ef}_figure.svg'
