@@ -1,0 +1,30 @@
+NODE SUMMARY
+service,in_edges,out_edges,num_in,num_out,num_out-in,num_invo-in,num_invo-out,num_invo-in-avg,num_invo-out-avg,num_invo-in-var,num_invo-out-var,num_anomalous_in,num_anomalous_out
+verification-code,"[('auth', 'verification-code', {'num_invo': 35}), ('gateway', 'verification-code', {'num_invo': 201})]",[],2,0,-2,236,0,118.0,n/a,6889.0,n/a,0,0
+travel,"[('gateway', 'travel', {'num_invo': 18, 'anomalous': True, 'selected_features': ['latency', 'http_status']}), ('route-plan', 'travel', {'num_invo': 14, 'anomalous': True, 'selected_features': ['http_status']})]","[('travel', 'ticketinfo', {'num_invo': 32, 'anomalous': True, 'selected_features': ['http_status']})]",2,1,-1,32,32,16.0,n/a,4.0,n/a,2,1
+admin-order,"[('gateway', 'admin-order', {'num_invo': 28, 'anomalous': True, 'selected_features': ['cpu_use']})]","[('admin-order', 'order', {'num_invo': 21}), ('admin-order', 'order-other', {'num_invo': 15})]",1,2,1,28,36,n/a,18.0,n/a,9.0,1,0
+order,"[('admin-order', 'order', {'num_invo': 21})]",[],1,0,-1,21,0,n/a,n/a,n/a,n/a,0,0
+order-other,"[('admin-order', 'order-other', {'num_invo': 15})]",[],1,0,-1,15,0,n/a,n/a,n/a,n/a,0,0
+auth,"[('gateway', 'auth', {'num_invo': 38})]","[('auth', 'verification-code', {'num_invo': 35})]",1,1,0,38,35,n/a,n/a,n/a,n/a,0,0
+consign,"[('gateway', 'consign', {'num_invo': 9})]",[],1,0,-1,9,0,n/a,n/a,n/a,n/a,0,0
+travel-plan,"[('gateway', 'travel-plan', {'num_invo': 16, 'anomalous': True, 'selected_features': ['latency', 'http_status']})]","[('travel-plan', 'route-plan', {'num_invo': 16, 'anomalous': True, 'selected_features': ['latency', 'http_status']})]",1,1,0,16,16,n/a,n/a,n/a,n/a,1,1
+ts-ui-dashboard,"[('gateway', 'ts-ui-dashboard', {'num_invo': 36})]",[],1,0,-1,36,0,n/a,n/a,n/a,n/a,0,0
+route-plan,"[('travel-plan', 'route-plan', {'num_invo': 16, 'anomalous': True, 'selected_features': ['latency', 'http_status']})]","[('route-plan', 'travel', {'num_invo': 14, 'anomalous': True, 'selected_features': ['http_status']})]",1,1,0,16,14,n/a,n/a,n/a,n/a,1,1
+ticketinfo,"[('travel', 'ticketinfo', {'num_invo': 32, 'anomalous': True, 'selected_features': ['http_status']})]",[],1,0,-1,32,0,n/a,n/a,n/a,n/a,1,0
+gateway,[],"[('gateway', 'admin-order', {'num_invo': 28, 'anomalous': True, 'selected_features': ['cpu_use']}), ('gateway', 'auth', {'num_invo': 38}), ('gateway', 'consign', {'num_invo': 9}), ('gateway', 'travel', {'num_invo': 18, 'anomalous': True, 'selected_features': ['latency', 'http_status']}), ('gateway', 'travel-plan', {'num_invo': 16, 'anomalous': True, 'selected_features': ['latency', 'http_status']}), ('gateway', 'ts-ui-dashboard', {'num_invo': 36}), ('gateway', 'verification-code', {'num_invo': 201})]",0,7,7,0,346,n/a,49.42857142857143,n/a,3926.244897959183,0,3
+
+EDGE SUMMARY
+source,target,num_invo,anomalous,selected_features
+admin-order,order,21,0,
+admin-order,order-other,15,0,
+auth,verification-code,35,0,
+gateway,admin-order,28,1,['cpu_use']
+gateway,auth,38,0,
+gateway,consign,9,0,
+gateway,travel,18,1,"['latency', 'http_status']"
+gateway,travel-plan,16,1,"['latency', 'http_status']"
+gateway,ts-ui-dashboard,36,0,
+gateway,verification-code,201,0,
+travel,ticketinfo,32,1,['http_status']
+travel-plan,route-plan,16,1,"['latency', 'http_status']"
+route-plan,travel,14,1,['http_status']

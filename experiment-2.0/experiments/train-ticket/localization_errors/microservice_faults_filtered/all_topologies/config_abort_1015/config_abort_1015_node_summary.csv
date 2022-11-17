@@ -1,0 +1,42 @@
+NODE SUMMARY
+service,in_edges,out_edges,num_in,num_out,num_out-in,num_invo-in,num_invo-out,num_invo-in-avg,num_invo-out-avg,num_invo-in-var,num_invo-out-var,num_anomalous_in,num_anomalous_out
+travel,"[('gateway', 'travel', {'num_invo': 9, 'anomalous': True, 'selected_features': ['http_status']}), ('route-plan', 'travel', {'num_invo': 14, 'anomalous': True, 'selected_features': ['http_status']}), ('seat', 'travel', {'num_invo': 40})]","[('travel', 'order', {'num_invo': 16}), ('travel', 'route', {'num_invo': 55}), ('travel', 'seat', {'num_invo': 20, 'anomalous': True, 'selected_features': ['http_status']}), ('travel', 'ticketinfo', {'num_invo': 106}), ('travel', 'train', {'num_invo': 16})]",3,5,2,63,213,21.0,42.6,184.66666666666666,1219.8400000000001,2,1
+verification-code,"[('auth', 'verification-code', {'num_invo': 86}), ('gateway', 'verification-code', {'num_invo': 440})]",[],2,0,-2,526,0,263.0,n/a,31329.0,n/a,0,0
+route,"[('basic', 'route', {'num_invo': 21}), ('travel', 'route', {'num_invo': 55})]",[],2,0,-2,76,0,38.0,n/a,289.0,n/a,0,0
+train,"[('basic', 'train', {'num_invo': 19}), ('travel', 'train', {'num_invo': 16})]",[],2,0,-2,35,0,17.5,n/a,2.25,n/a,0,0
+order,"[('seat', 'order', {'num_invo': 21}), ('travel', 'order', {'num_invo': 16})]",[],2,0,-2,37,0,18.5,n/a,6.25,n/a,0,0
+auth,"[('gateway', 'auth', {'num_invo': 98})]","[('auth', 'verification-code', {'num_invo': 86})]",1,1,0,98,86,n/a,n/a,n/a,n/a,0,0
+basic,"[('ticketinfo', 'basic', {'num_invo': 133})]","[('basic', 'price', {'num_invo': 20}), ('basic', 'route', {'num_invo': 21}), ('basic', 'station', {'num_invo': 200}), ('basic', 'train', {'num_invo': 19})]",1,4,3,133,260,n/a,65.0,n/a,6075.5,0,0
+price,"[('basic', 'price', {'num_invo': 20})]",[],1,0,-1,20,0,n/a,n/a,n/a,n/a,0,0
+station,"[('basic', 'station', {'num_invo': 200})]",[],1,0,-1,200,0,n/a,n/a,n/a,n/a,0,0
+consign,"[('gateway', 'consign', {'num_invo': 10})]",[],1,0,-1,10,0,n/a,n/a,n/a,n/a,0,0
+travel-plan,"[('gateway', 'travel-plan', {'num_invo': 16, 'anomalous': True, 'selected_features': ['latency', 'http_status']})]","[('travel-plan', 'route-plan', {'num_invo': 16, 'anomalous': True, 'selected_features': ['latency', 'http_status']})]",1,1,0,16,16,n/a,n/a,n/a,n/a,1,1
+route-plan,"[('travel-plan', 'route-plan', {'num_invo': 16, 'anomalous': True, 'selected_features': ['latency', 'http_status']})]","[('route-plan', 'travel', {'num_invo': 14, 'anomalous': True, 'selected_features': ['http_status']})]",1,1,0,16,14,n/a,n/a,n/a,n/a,1,1
+seat,"[('travel', 'seat', {'num_invo': 20, 'anomalous': True, 'selected_features': ['http_status']})]","[('seat', 'config', {'num_invo': 21, 'anomalous': True, 'selected_features': ['http_status']}), ('seat', 'order', {'num_invo': 21}), ('seat', 'travel', {'num_invo': 40})]",1,3,2,20,82,n/a,27.333333333333332,n/a,80.22222222222223,1,1
+config,"[('seat', 'config', {'num_invo': 21, 'anomalous': True, 'selected_features': ['http_status']})]",[],1,0,-1,21,0,n/a,n/a,n/a,n/a,1,0
+ticketinfo,"[('travel', 'ticketinfo', {'num_invo': 106})]","[('ticketinfo', 'basic', {'num_invo': 133})]",1,1,0,106,133,n/a,n/a,n/a,n/a,0,0
+gateway,[],"[('gateway', 'auth', {'num_invo': 98}), ('gateway', 'consign', {'num_invo': 10}), ('gateway', 'travel', {'num_invo': 9, 'anomalous': True, 'selected_features': ['http_status']}), ('gateway', 'travel-plan', {'num_invo': 16, 'anomalous': True, 'selected_features': ['latency', 'http_status']}), ('gateway', 'verification-code', {'num_invo': 440})]",0,5,5,0,573,n/a,114.6,n/a,27595.039999999997,0,2
+
+EDGE SUMMARY
+source,target,num_invo,anomalous,selected_features
+auth,verification-code,86,0,
+basic,price,20,0,
+basic,route,21,0,
+basic,station,200,0,
+basic,train,19,0,
+gateway,auth,98,0,
+gateway,consign,10,0,
+gateway,travel,9,1,['http_status']
+gateway,travel-plan,16,1,"['latency', 'http_status']"
+gateway,verification-code,440,0,
+travel,order,16,0,
+travel,route,55,0,
+travel,seat,20,1,['http_status']
+travel,ticketinfo,106,0,
+travel,train,16,0,
+travel-plan,route-plan,16,1,"['latency', 'http_status']"
+route-plan,travel,14,1,['http_status']
+seat,config,21,1,['http_status']
+seat,order,21,0,
+seat,travel,40,0,
+ticketinfo,basic,133,0,

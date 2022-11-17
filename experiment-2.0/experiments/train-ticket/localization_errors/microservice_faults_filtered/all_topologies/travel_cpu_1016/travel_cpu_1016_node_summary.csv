@@ -1,0 +1,104 @@
+NODE SUMMARY
+service,in_edges,out_edges,num_in,num_out,num_out-in,num_invo-in,num_invo-out,num_invo-in-avg,num_invo-out-avg,num_invo-in-var,num_invo-out-var,num_anomalous_in,num_anomalous_out
+order,"[('admin-order', 'order', {'num_invo': 60}), ('cancel', 'order', {'num_invo': 8}), ('gateway', 'order', {'num_invo': 40}), ('inside-payment', 'order', {'num_invo': 12}), ('preserve', 'order', {'num_invo': 4}), ('seat', 'order', {'num_invo': 54}), ('security', 'order', {'num_invo': 6}), ('travel', 'order', {'num_invo': 21})]","[('order', 'station', {'num_invo': 25})]",8,1,-7,205,25,25.625,n/a,445.484375,n/a,0,0
+station,"[('basic', 'station', {'num_invo': 229}), ('food', 'station', {'num_invo': 48}), ('order', 'station', {'num_invo': 25}), ('order-other', 'station', {'num_invo': 43}), ('preserve', 'station', {'num_invo': 11}), ('travel-plan', 'station', {'num_invo': 6})]",[],6,0,-6,362,0,60.333333333333336,n/a,5922.555555555555,n/a,0,0
+order-other,"[('admin-order', 'order-other', {'num_invo': 41}), ('gateway', 'order-other', {'num_invo': 58}), ('seat', 'order-other', {'num_invo': 6}), ('security', 'order-other', {'num_invo': 6}), ('travel2', 'order-other', {'num_invo': 2})]","[('order-other', 'station', {'num_invo': 43})]",5,1,-4,113,43,22.6,n/a,513.4399999999999,n/a,0,0
+travel,"[('food', 'travel', {'num_invo': 22, 'anomalous': True, 'selected_features': ['latency', 'cpu_use']}), ('gateway', 'travel', {'num_invo': 10, 'anomalous': True, 'selected_features': ['latency', 'cpu_use']}), ('preserve', 'travel', {'num_invo': 6, 'anomalous': True, 'selected_features': ['latency', 'cpu_use']}), ('route-plan', 'travel', {'num_invo': 12, 'anomalous': True, 'selected_features': ['latency', 'cpu_use']}), ('seat', 'travel', {'num_invo': 117, 'anomalous': True, 'selected_features': ['latency', 'cpu_use']})]","[('travel', 'order', {'num_invo': 21}), ('travel', 'route', {'num_invo': 149}), ('travel', 'seat', {'num_invo': 35, 'anomalous': True, 'selected_features': ['latency']}), ('travel', 'ticketinfo', {'num_invo': 136}), ('travel', 'train', {'num_invo': 87})]",5,5,0,167,428,33.4,85.6,1775.0399999999997,2659.0399999999995,5,1
+seat,"[('preserve', 'seat', {'num_invo': 5, 'anomalous': True, 'selected_features': ['latency']}), ('travel', 'seat', {'num_invo': 35, 'anomalous': True, 'selected_features': ['latency']}), ('travel-plan', 'seat', {'num_invo': 12, 'anomalous': True, 'selected_features': ['latency']}), ('travel2', 'seat', {'num_invo': 3})]","[('seat', 'config', {'num_invo': 61}), ('seat', 'order', {'num_invo': 54}), ('seat', 'order-other', {'num_invo': 6}), ('seat', 'travel', {'num_invo': 117, 'anomalous': True, 'selected_features': ['latency', 'cpu_use']}), ('seat', 'travel2', {'num_invo': 11})]",4,5,1,55,249,13.75,49.8,161.6875,1616.56,3,1
+ticketinfo,"[('preserve', 'ticketinfo', {'num_invo': 5}), ('travel', 'ticketinfo', {'num_invo': 136}), ('travel-plan', 'ticketinfo', {'num_invo': 25}), ('travel2', 'ticketinfo', {'num_invo': 14})]","[('ticketinfo', 'basic', {'num_invo': 143})]",4,1,-3,180,143,45.0,n/a,2810.5,n/a,0,0
+route,"[('basic', 'route', {'num_invo': 20}), ('travel', 'route', {'num_invo': 149}), ('travel2', 'route', {'num_invo': 24})]",[],3,0,-3,193,0,64.33333333333333,n/a,3586.8888888888887,n/a,0,0
+train,"[('basic', 'train', {'num_invo': 20}), ('travel', 'train', {'num_invo': 87}), ('travel2', 'train', {'num_invo': 11})]",[],3,0,-3,118,0,39.333333333333336,n/a,1149.5555555555554,n/a,0,0
+verification-code,"[('auth', 'verification-code', {'num_invo': 21}), ('gateway', 'verification-code', {'num_invo': 122})]",[],2,0,-2,143,0,71.5,n/a,2550.25,n/a,0,0
+inside-payment,"[('cancel', 'inside-payment', {'num_invo': 4}), ('gateway', 'inside-payment', {'num_invo': 9})]","[('inside-payment', 'order', {'num_invo': 12}), ('inside-payment', 'payment', {'num_invo': 7})]",2,2,0,13,19,6.5,9.5,6.25,6.25,0,0
+notification,"[('cancel', 'notification', {'num_invo': 2}), ('preserve', 'notification', {'num_invo': 6})]",[],2,0,-2,8,0,4.0,n/a,4.0,n/a,0,0
+user,"[('cancel', 'user', {'num_invo': 2}), ('preserve', 'user', {'num_invo': 5})]",[],2,0,-2,7,0,3.5,n/a,2.25,n/a,0,0
+food,"[('gateway', 'food', {'num_invo': 28, 'anomalous': True, 'selected_features': ['latency', 'http_status']}), ('preserve', 'food', {'num_invo': 5, 'anomalous': True, 'selected_features': ['latency']})]","[('food', 'food-map', {'num_invo': 46}), ('food', 'station', {'num_invo': 48}), ('food', 'travel', {'num_invo': 22, 'anomalous': True, 'selected_features': ['latency', 'cpu_use']})]",2,3,1,33,116,16.5,38.666666666666664,132.25,139.55555555555557,2,1
+assurance,"[('gateway', 'assurance', {'num_invo': 47}), ('preserve', 'assurance', {'num_invo': 5})]",[],2,0,-2,52,0,26.0,n/a,441.0,n/a,0,0
+contacts,"[('gateway', 'contacts', {'num_invo': 55}), ('preserve', 'contacts', {'num_invo': 3})]",[],2,0,-2,58,0,29.0,n/a,676.0,n/a,0,0
+travel2,"[('route-plan', 'travel2', {'num_invo': 6}), ('seat', 'travel2', {'num_invo': 11})]","[('travel2', 'order-other', {'num_invo': 2}), ('travel2', 'route', {'num_invo': 24}), ('travel2', 'seat', {'num_invo': 3}), ('travel2', 'ticketinfo', {'num_invo': 14}), ('travel2', 'train', {'num_invo': 11})]",2,5,3,17,54,8.5,10.8,6.25,64.56000000000002,0,0
+admin-order,"[('gateway', 'admin-order', {'num_invo': 75})]","[('admin-order', 'order', {'num_invo': 60}), ('admin-order', 'order-other', {'num_invo': 41})]",1,2,1,75,101,n/a,50.5,n/a,90.25,0,0
+auth,"[('gateway', 'auth', {'num_invo': 29})]","[('auth', 'verification-code', {'num_invo': 21})]",1,1,0,29,21,n/a,n/a,n/a,n/a,0,0
+basic,"[('ticketinfo', 'basic', {'num_invo': 143})]","[('basic', 'price', {'num_invo': 21}), ('basic', 'route', {'num_invo': 20}), ('basic', 'station', {'num_invo': 229}), ('basic', 'train', {'num_invo': 20})]",1,4,3,143,290,n/a,72.5,n/a,8164.25,0,0
+price,"[('basic', 'price', {'num_invo': 21})]",[],1,0,-1,21,0,n/a,n/a,n/a,n/a,0,0
+cancel,"[('gateway', 'cancel', {'num_invo': 9})]","[('cancel', 'inside-payment', {'num_invo': 4}), ('cancel', 'notification', {'num_invo': 2}), ('cancel', 'order', {'num_invo': 8}), ('cancel', 'user', {'num_invo': 2})]",1,4,3,9,16,n/a,4.0,n/a,6.0,0,0
+food-map,"[('food', 'food-map', {'num_invo': 46})]",[],1,0,-1,46,0,n/a,n/a,n/a,n/a,0,0
+consign,"[('gateway', 'consign', {'num_invo': 8})]",[],1,0,-1,8,0,n/a,n/a,n/a,n/a,0,0
+preserve,"[('gateway', 'preserve', {'num_invo': 6, 'anomalous': True, 'selected_features': ['latency']})]","[('preserve', 'assurance', {'num_invo': 5}), ('preserve', 'contacts', {'num_invo': 3}), ('preserve', 'food', {'num_invo': 5, 'anomalous': True, 'selected_features': ['latency']}), ('preserve', 'notification', {'num_invo': 6}), ('preserve', 'order', {'num_invo': 4}), ('preserve', 'seat', {'num_invo': 5, 'anomalous': True, 'selected_features': ['latency']}), ('preserve', 'security', {'num_invo': 2}), ('preserve', 'station', {'num_invo': 11}), ('preserve', 'ticketinfo', {'num_invo': 5}), ('preserve', 'travel', {'num_invo': 6, 'anomalous': True, 'selected_features': ['latency', 'cpu_use']}), ('preserve', 'user', {'num_invo': 5})]",1,11,10,6,57,n/a,5.181818181818182,n/a,4.694214876033058,1,3
+travel-plan,"[('gateway', 'travel-plan', {'num_invo': 4, 'anomalous': True, 'selected_features': ['latency', 'http_status']})]","[('travel-plan', 'route-plan', {'num_invo': 2, 'anomalous': True, 'selected_features': ['latency']}), ('travel-plan', 'seat', {'num_invo': 12, 'anomalous': True, 'selected_features': ['latency']}), ('travel-plan', 'station', {'num_invo': 6}), ('travel-plan', 'ticketinfo', {'num_invo': 25})]",1,4,3,4,45,n/a,11.25,n/a,75.6875,1,2
+ts-ui-dashboard,"[('gateway', 'ts-ui-dashboard', {'num_invo': 79})]",[],1,0,-1,79,0,n/a,n/a,n/a,n/a,0,0
+payment,"[('inside-payment', 'payment', {'num_invo': 7})]",[],1,0,-1,7,0,n/a,n/a,n/a,n/a,0,0
+security,"[('preserve', 'security', {'num_invo': 2})]","[('security', 'order', {'num_invo': 6}), ('security', 'order-other', {'num_invo': 6})]",1,2,1,2,12,n/a,6.0,n/a,0.0,0,0
+route-plan,"[('travel-plan', 'route-plan', {'num_invo': 2, 'anomalous': True, 'selected_features': ['latency']})]","[('route-plan', 'travel', {'num_invo': 12, 'anomalous': True, 'selected_features': ['latency', 'cpu_use']}), ('route-plan', 'travel2', {'num_invo': 6})]",1,2,1,2,18,n/a,9.0,n/a,9.0,1,1
+config,"[('seat', 'config', {'num_invo': 61})]",[],1,0,-1,61,0,n/a,n/a,n/a,n/a,0,0
+gateway,[],"[('gateway', 'admin-order', {'num_invo': 75}), ('gateway', 'assurance', {'num_invo': 47}), ('gateway', 'auth', {'num_invo': 29}), ('gateway', 'cancel', {'num_invo': 9}), ('gateway', 'consign', {'num_invo': 8}), ('gateway', 'contacts', {'num_invo': 55}), ('gateway', 'food', {'num_invo': 28, 'anomalous': True, 'selected_features': ['latency', 'http_status']}), ('gateway', 'inside-payment', {'num_invo': 9}), ('gateway', 'order', {'num_invo': 40}), ('gateway', 'order-other', {'num_invo': 58}), ('gateway', 'preserve', {'num_invo': 6, 'anomalous': True, 'selected_features': ['latency']}), ('gateway', 'travel', {'num_invo': 10, 'anomalous': True, 'selected_features': ['latency', 'cpu_use']}), ('gateway', 'travel-plan', {'num_invo': 4, 'anomalous': True, 'selected_features': ['latency', 'http_status']}), ('gateway', 'ts-ui-dashboard', {'num_invo': 79}), ('gateway', 'verification-code', {'num_invo': 122})]",0,15,15,0,579,n/a,38.6,n/a,1106.7733333333335,0,4
+
+EDGE SUMMARY
+source,target,num_invo,anomalous,selected_features
+admin-order,order,60,0,
+admin-order,order-other,41,0,
+order,station,25,0,
+order-other,station,43,0,
+auth,verification-code,21,0,
+basic,price,21,0,
+basic,route,20,0,
+basic,station,229,0,
+basic,train,20,0,
+cancel,inside-payment,4,0,
+cancel,notification,2,0,
+cancel,order,8,0,
+cancel,user,2,0,
+inside-payment,order,12,0,
+inside-payment,payment,7,0,
+food,food-map,46,0,
+food,station,48,0,
+food,travel,22,1,"['latency', 'cpu_use']"
+travel,order,21,0,
+travel,route,149,0,
+travel,seat,35,1,['latency']
+travel,ticketinfo,136,0,
+travel,train,87,0,
+gateway,admin-order,75,0,
+gateway,assurance,47,0,
+gateway,auth,29,0,
+gateway,cancel,9,0,
+gateway,consign,8,0,
+gateway,contacts,55,0,
+gateway,food,28,1,"['latency', 'http_status']"
+gateway,inside-payment,9,0,
+gateway,order,40,0,
+gateway,order-other,58,0,
+gateway,preserve,6,1,['latency']
+gateway,travel,10,1,"['latency', 'cpu_use']"
+gateway,travel-plan,4,1,"['latency', 'http_status']"
+gateway,ts-ui-dashboard,79,0,
+gateway,verification-code,122,0,
+preserve,assurance,5,0,
+preserve,contacts,3,0,
+preserve,food,5,1,['latency']
+preserve,notification,6,0,
+preserve,order,4,0,
+preserve,seat,5,1,['latency']
+preserve,security,2,0,
+preserve,station,11,0,
+preserve,ticketinfo,5,0,
+preserve,travel,6,1,"['latency', 'cpu_use']"
+preserve,user,5,0,
+travel-plan,route-plan,2,1,['latency']
+travel-plan,seat,12,1,['latency']
+travel-plan,station,6,0,
+travel-plan,ticketinfo,25,0,
+seat,config,61,0,
+seat,order,54,0,
+seat,order-other,6,0,
+seat,travel,117,1,"['latency', 'cpu_use']"
+seat,travel2,11,0,
+security,order,6,0,
+security,order-other,6,0,
+ticketinfo,basic,143,0,
+route-plan,travel,12,1,"['latency', 'cpu_use']"
+route-plan,travel2,6,0,
+travel2,order-other,2,0,
+travel2,route,24,0,
+travel2,seat,3,0,
+travel2,ticketinfo,14,0,
+travel2,train,11,0,

@@ -1,0 +1,39 @@
+NODE SUMMARY
+service,in_edges,out_edges,num_in,num_out,num_out-in,num_invo-in,num_invo-out,num_invo-in-avg,num_invo-out-avg,num_invo-in-var,num_invo-out-var,num_anomalous_in,num_anomalous_out
+verification-code,"[('auth', 'verification-code', {'num_invo': 53}), ('gateway', 'verification-code', {'num_invo': 286})]",[],2,0,-2,339,0,169.5,n/a,13572.25,n/a,0,0
+route,"[('basic', 'route', {'num_invo': 7}), ('travel', 'route', {'num_invo': 47})]",[],2,0,-2,54,0,27.0,n/a,400.0,n/a,0,0
+train,"[('basic', 'train', {'num_invo': 8}), ('travel', 'train', {'num_invo': 20})]",[],2,0,-2,28,0,14.0,n/a,36.0,n/a,0,0
+travel,"[('gateway', 'travel', {'num_invo': 16, 'anomalous': True, 'selected_features': ['latency', 'http_status']}), ('seat', 'travel', {'num_invo': 18, 'anomalous': True, 'selected_features': ['latency']})]","[('travel', 'order', {'num_invo': 9}), ('travel', 'route', {'num_invo': 47}), ('travel', 'seat', {'num_invo': 14}), ('travel', 'ticketinfo', {'num_invo': 72, 'anomalous': True, 'selected_features': ['latency']}), ('travel', 'train', {'num_invo': 20})]",2,5,3,34,162,17.0,32.4,1.0,564.24,2,1
+order,"[('seat', 'order', {'num_invo': 10}), ('travel', 'order', {'num_invo': 9})]",[],2,0,-2,19,0,9.5,n/a,0.25,n/a,0,0
+auth,"[('gateway', 'auth', {'num_invo': 80})]","[('auth', 'verification-code', {'num_invo': 53})]",1,1,0,80,53,n/a,n/a,n/a,n/a,0,0
+basic,"[('ticketinfo', 'basic', {'num_invo': 74})]","[('basic', 'price', {'num_invo': 7}), ('basic', 'route', {'num_invo': 7}), ('basic', 'station', {'num_invo': 110}), ('basic', 'train', {'num_invo': 8})]",1,4,3,74,132,n/a,33.0,n/a,1976.5,0,0
+price,"[('basic', 'price', {'num_invo': 7})]",[],1,0,-1,7,0,n/a,n/a,n/a,n/a,0,0
+station,"[('basic', 'station', {'num_invo': 110})]",[],1,0,-1,110,0,n/a,n/a,n/a,n/a,0,0
+consign,"[('gateway', 'consign', {'num_invo': 18})]",[],1,0,-1,18,0,n/a,n/a,n/a,n/a,0,0
+travel-plan,"[('gateway', 'travel-plan', {'num_invo': 3, 'anomalous': True, 'selected_features': ['latency', 'http_status']})]",[],1,0,-1,3,0,n/a,n/a,n/a,n/a,1,0
+seat,"[('travel', 'seat', {'num_invo': 14})]","[('seat', 'config', {'num_invo': 8}), ('seat', 'order', {'num_invo': 10}), ('seat', 'travel', {'num_invo': 18, 'anomalous': True, 'selected_features': ['latency']})]",1,3,2,14,36,n/a,12.0,n/a,18.666666666666668,0,1
+config,"[('seat', 'config', {'num_invo': 8})]",[],1,0,-1,8,0,n/a,n/a,n/a,n/a,0,0
+ticketinfo,"[('travel', 'ticketinfo', {'num_invo': 72, 'anomalous': True, 'selected_features': ['latency']})]","[('ticketinfo', 'basic', {'num_invo': 74})]",1,1,0,72,74,n/a,n/a,n/a,n/a,1,0
+gateway,[],"[('gateway', 'auth', {'num_invo': 80}), ('gateway', 'consign', {'num_invo': 18}), ('gateway', 'travel', {'num_invo': 16, 'anomalous': True, 'selected_features': ['latency', 'http_status']}), ('gateway', 'travel-plan', {'num_invo': 3, 'anomalous': True, 'selected_features': ['latency', 'http_status']}), ('gateway', 'verification-code', {'num_invo': 286})]",0,5,5,0,403,n/a,80.6,n/a,11260.64,0,2
+
+EDGE SUMMARY
+source,target,num_invo,anomalous,selected_features
+auth,verification-code,53,0,
+basic,price,7,0,
+basic,route,7,0,
+basic,station,110,0,
+basic,train,8,0,
+gateway,auth,80,0,
+gateway,consign,18,0,
+gateway,travel,16,1,"['latency', 'http_status']"
+gateway,travel-plan,3,1,"['latency', 'http_status']"
+gateway,verification-code,286,0,
+travel,order,9,0,
+travel,route,47,0,
+travel,seat,14,0,
+travel,ticketinfo,72,1,['latency']
+travel,train,20,0,
+seat,config,8,0,
+seat,order,10,0,
+seat,travel,18,1,['latency']
+ticketinfo,basic,74,0,

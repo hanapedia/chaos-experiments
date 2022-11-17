@@ -1,0 +1,26 @@
+NODE SUMMARY
+service,in_edges,out_edges,num_in,num_out,num_out-in,num_invo-in,num_invo-out,num_invo-in-avg,num_invo-out-avg,num_invo-in-var,num_invo-out-var,num_anomalous_in,num_anomalous_out
+verification-code,"[('auth', 'verification-code', {'num_invo': 58}), ('gateway', 'verification-code', {'num_invo': 328})]",[],2,0,-2,386,0,193.0,n/a,18225.0,n/a,0,0
+travel,"[('gateway', 'travel', {'num_invo': 27, 'anomalous': True, 'selected_features': ['http_status']}), ('route-plan', 'travel', {'num_invo': 20, 'anomalous': True, 'selected_features': ['http_status']})]","[('travel', 'ticketinfo', {'num_invo': 15, 'anomalous': True, 'selected_features': ['http_status']})]",2,1,-1,47,15,23.5,n/a,12.25,n/a,2,1
+auth,"[('gateway', 'auth', {'num_invo': 68})]","[('auth', 'verification-code', {'num_invo': 58})]",1,1,0,68,58,n/a,n/a,n/a,n/a,0,0
+basic,"[('ticketinfo', 'basic', {'num_invo': 44, 'anomalous': True, 'selected_features': ['http_status']})]","[('basic', 'station', {'num_invo': 31, 'anomalous': True, 'selected_features': ['http_status']})]",1,1,0,44,31,n/a,n/a,n/a,n/a,1,1
+station,"[('basic', 'station', {'num_invo': 31, 'anomalous': True, 'selected_features': ['http_status']})]",[],1,0,-1,31,0,n/a,n/a,n/a,n/a,1,0
+consign,"[('gateway', 'consign', {'num_invo': 16})]",[],1,0,-1,16,0,n/a,n/a,n/a,n/a,0,0
+travel-plan,"[('gateway', 'travel-plan', {'num_invo': 27, 'anomalous': True, 'selected_features': ['latency', 'http_status']})]","[('travel-plan', 'route-plan', {'num_invo': 9, 'anomalous': True, 'selected_features': ['latency', 'cpu_use', 'http_status']})]",1,1,0,27,9,n/a,n/a,n/a,n/a,1,1
+route-plan,"[('travel-plan', 'route-plan', {'num_invo': 9, 'anomalous': True, 'selected_features': ['latency', 'cpu_use', 'http_status']})]","[('route-plan', 'travel', {'num_invo': 20, 'anomalous': True, 'selected_features': ['http_status']})]",1,1,0,9,20,n/a,n/a,n/a,n/a,1,1
+ticketinfo,"[('travel', 'ticketinfo', {'num_invo': 15, 'anomalous': True, 'selected_features': ['http_status']})]","[('ticketinfo', 'basic', {'num_invo': 44, 'anomalous': True, 'selected_features': ['http_status']})]",1,1,0,15,44,n/a,n/a,n/a,n/a,1,1
+gateway,[],"[('gateway', 'auth', {'num_invo': 68}), ('gateway', 'consign', {'num_invo': 16}), ('gateway', 'travel', {'num_invo': 27, 'anomalous': True, 'selected_features': ['http_status']}), ('gateway', 'travel-plan', {'num_invo': 27, 'anomalous': True, 'selected_features': ['latency', 'http_status']}), ('gateway', 'verification-code', {'num_invo': 328})]",0,5,5,0,466,n/a,93.2,n/a,14098.16,0,2
+
+EDGE SUMMARY
+source,target,num_invo,anomalous,selected_features
+auth,verification-code,58,0,
+basic,station,31,1,['http_status']
+gateway,auth,68,0,
+gateway,consign,16,0,
+gateway,travel,27,1,['http_status']
+gateway,travel-plan,27,1,"['latency', 'http_status']"
+gateway,verification-code,328,0,
+travel,ticketinfo,15,1,['http_status']
+travel-plan,route-plan,9,1,"['latency', 'cpu_use', 'http_status']"
+route-plan,travel,20,1,['http_status']
+ticketinfo,basic,44,1,['http_status']

@@ -1,0 +1,24 @@
+NODE SUMMARY
+service,in_edges,out_edges,num_in,num_out,num_out-in,num_invo-in,num_invo-out,num_invo-in-avg,num_invo-out-avg,num_invo-in-var,num_invo-out-var,num_anomalous_in,num_anomalous_out
+verification-code,"[('auth', 'verification-code', {'num_invo': 71}), ('gateway', 'verification-code', {'num_invo': 682})]",[],2,0,-2,753,0,376.5,n/a,93330.25,n/a,0,0
+travel,"[('gateway', 'travel', {'num_invo': 54, 'anomalous': True, 'selected_features': ['latency', 'http_status']}), ('route-plan', 'travel', {'num_invo': 58, 'anomalous': True, 'selected_features': ['http_status']})]","[('travel', 'ticketinfo', {'num_invo': 159, 'anomalous': True, 'selected_features': ['http_status']})]",2,1,-1,112,159,56.0,n/a,4.0,n/a,2,1
+auth,"[('gateway', 'auth', {'num_invo': 167})]","[('auth', 'verification-code', {'num_invo': 71})]",1,1,0,167,71,n/a,n/a,n/a,n/a,0,0
+consign,"[('gateway', 'consign', {'num_invo': 29})]",[],1,0,-1,29,0,n/a,n/a,n/a,n/a,0,0
+travel-plan,"[('gateway', 'travel-plan', {'num_invo': 79, 'anomalous': True, 'selected_features': ['latency', 'http_status']})]","[('travel-plan', 'route-plan', {'num_invo': 47, 'anomalous': True, 'selected_features': ['latency', 'http_status']})]",1,1,0,79,47,n/a,n/a,n/a,n/a,1,1
+route-plan,"[('travel-plan', 'route-plan', {'num_invo': 47, 'anomalous': True, 'selected_features': ['latency', 'http_status']})]","[('route-plan', 'travel', {'num_invo': 58, 'anomalous': True, 'selected_features': ['http_status']})]",1,1,0,47,58,n/a,n/a,n/a,n/a,1,1
+ticketinfo,"[('travel', 'ticketinfo', {'num_invo': 159, 'anomalous': True, 'selected_features': ['http_status']})]","[('ticketinfo', 'basic', {'num_invo': 72, 'anomalous': True, 'selected_features': ['http_status']})]",1,1,0,159,72,n/a,n/a,n/a,n/a,1,1
+basic,"[('ticketinfo', 'basic', {'num_invo': 72, 'anomalous': True, 'selected_features': ['http_status']})]",[],1,0,-1,72,0,n/a,n/a,n/a,n/a,1,0
+gateway,[],"[('gateway', 'auth', {'num_invo': 167}), ('gateway', 'consign', {'num_invo': 29}), ('gateway', 'travel', {'num_invo': 54, 'anomalous': True, 'selected_features': ['latency', 'http_status']}), ('gateway', 'travel-plan', {'num_invo': 79, 'anomalous': True, 'selected_features': ['latency', 'http_status']}), ('gateway', 'verification-code', {'num_invo': 682})]",0,5,5,0,1011,n/a,202.2,n/a,59717.36,0,2
+
+EDGE SUMMARY
+source,target,num_invo,anomalous,selected_features
+auth,verification-code,71,0,
+gateway,auth,167,0,
+gateway,consign,29,0,
+gateway,travel,54,1,"['latency', 'http_status']"
+gateway,travel-plan,79,1,"['latency', 'http_status']"
+gateway,verification-code,682,0,
+travel,ticketinfo,159,1,['http_status']
+travel-plan,route-plan,47,1,"['latency', 'http_status']"
+route-plan,travel,58,1,['http_status']
+ticketinfo,basic,72,1,['http_status']
