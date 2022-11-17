@@ -1,6 +1,7 @@
 **/*.pkl
 **/datasets/
-**/localization_errors/*.csv
+**/localization_errors/**/*.csv
 **/*.svg
 !**/all_figures.svg
+!**/errors.csv
 
