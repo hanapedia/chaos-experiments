@@ -2,8 +2,6 @@
 ---
 - hosts: 127.0.0.1
   connection: local
-  vars_files:
-    - "./configs/reduced01.yaml"
   roles:
     - setup
     - encode

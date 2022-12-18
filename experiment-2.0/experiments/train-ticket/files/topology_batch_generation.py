@@ -37,7 +37,7 @@ def topology_batch_generation(experiment_name, error):
 
     for ef, (predictions, localizedat) in fault_results.items():
         name = ef
-        if localizedat != 1:
+        if int(localizedat) != 1:
             name += f'({localizedat})'
         topology = Topology(name=name, loc_err=True) 
 

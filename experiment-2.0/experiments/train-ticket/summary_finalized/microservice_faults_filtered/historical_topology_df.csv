@@ -1,0 +1,2 @@
+root_cause_service,fault_type,fault_date,num_nodes,num_edges,num_anomalous_edges,weight_edges,weight_anomalous_edges,num_traces,num_anomalous_traces,num_unique_traces,num_unique_anomalous_traces,localizedat
+n/a,n/a,n/a,36,95,0,900255,0,248531,0,71,0,n/a

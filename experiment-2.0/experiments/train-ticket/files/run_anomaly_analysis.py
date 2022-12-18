@@ -108,11 +108,12 @@ def rank_and_output(topology, output_csv):
             writer.writerow(row)
 
 def draw_all(topologies: list, output_all_figures):
-    nrows = 5
-    ncols = 6
-    fig_size = [64,36]
-    dpi = 160
-    _, axes = plt.subplots(nrows, ncols, figsize=fig_size, dpi=dpi, layout='tight')
+    ncols = 2
+    nrows = 15
+    ax_w_unit = 13
+    ax_h_unit = 11
+    fig_size = [ncols*ax_w_unit,nrows*ax_h_unit]
+    _, axes = plt.subplots(nrows, ncols, figsize=fig_size, layout='tight')
     for i, topology in enumerate(topologies):
         print(math.floor(i / ncols), i % ncols)
         ax = axes[math.floor(i / ncols), i % ncols]

@@ -1,4 +1,3 @@
-import math
 import sys
 sys.path.insert(0, '/Users/hirokihanada/code/src/github.com/hanapedia/rca_methods/topological_analysis')
 from topological_analysis import Topology
@@ -6,86 +5,97 @@ from topological_analysis import Topology
 import click
 import pandas as pd
 import pickle
-import pprint
+from pprint import pprint
 import networkx as nx
 import matplotlib.pyplot as plt
-import csv
 from pathlib import Path
+from tqdm import tqdm
+import csv
+import math
 import os
-# Input: errornous results csv file
-# Output: topology summary csv file, topology graph pdf file
-#
+from collections import defaultdict
+
+# Input: experiment name, graph drawing group, multi_rc_faults
+#   if multi_rc_faults flag is provided, faults with multiple root causes are separated and grouped on their own
+# Output: topology graphs grouped by given categories svg files
 @click.command('See the topological graph and pagerank')
 @click.option('-e', '--experiment_name', 'experiment_name', type=str)
-def run_anomaly_analysis(experiment_name):
-    localization_errors_csv = Path(f'./localization_errors/{experiment_name}/errors.csv')
+@click.option('-g', '--group_by', 'group_by', default='errorneous', type=str, help='errorneous(default), anomaly_type, or root_cause_service')
+def run_anomaly_analysis(experiment_name, group_by):
+    # argument validation
+    if group_by not in ('errorneous', 'anomaly_type', 'root_cause_service'):
+        raise Exception('Argument -g or --group_by must be errorneous, anomaly_type, or root_cause_service')
+        
+    figures_dir = Path(f'./localization_errors/{experiment_name}/figures')
+    try:
+        _ = figures_dir.resolve(strict=True)
+    except:
+        os.makedirs(figures_dir,exist_ok=True)
+
+    all_topologies_dir = Path(f'./localization_errors/{experiment_name}/all_topologies')
+    try:
+        _ = all_topologies_dir.resolve(strict=True)
+    except:
+        raise Exception(f'directory not found: {all_topologies_dir}')
+    experiment_results_csv = Path(f'./summary/{experiment_name}/{experiment_name}_results.csv')
+
     # will be in shape of {faultname:predictions}
-    errornous_faults = {}
-    with open(localization_errors_csv, 'r') as f:
+    fault_results = {} # will be in shape of {faultname:{root_cause_service:list, anomaly_type:str, localizedat:str}}
+    with open(experiment_results_csv, 'r') as f:
         reader = csv.reader(f)
         next(reader, None)
         for row in reader:
-            errornous_faults['_'.join(row[0:3])] = row[3]
+            root_cause_service = tuple(row[0].split('+'))
+            fault_results['_'.join(row[0:3])] = {
+                'root_cause_service': row[0],
+                'anomaly_type': row[1],
+                'errorneous': int(row[7])
+            }
 
-    topologies = []
-    for ef, predictions in errornous_faults.items():
-        topology = Topology(name=ef, loc_err=True) 
+    # group results names by given conditions
+    grouped = defaultdict(list)
+    for name, attrs in fault_results.items():
+        fault = dict(name=name, rank=attrs['errorneous'])
+        # handle multi root cause faults
+        if len(attrs['root_cause_service'].split('+')) > 1:
+            grouped['multi_rc'].append(fault)
+        elif group_by == 'errorneous':
+            if attrs['errorneous'] != 1:
+                grouped['erroneous'].append(fault)
+            else:
+                grouped['success'].append(fault)
+        else:
+            grouped[attrs[group_by]].append(fault)
 
-        errornous_fault_summary_dir = localization_errors_csv.parent/ 'faults' / ef
-        os.makedirs(errornous_fault_summary_dir, exist_ok=True)
+    # draw graphs for each groups
+    for group_key, faults in grouped.items():
+        topologies = []
+        for fault in faults:
+            topology_pkl = all_topologies_dir / fault['name'] / 'topology.pkl' 
+            with open(topology_pkl, 'rb') as f:
+                topology_obj = pickle.load(f)
 
-        errornous_fault_results_dir = Path(f'./results/{experiment_name}/{ef}')
-        topo = errornous_fault_summary_dir / 'topology.pkl' 
-        with open(topo, 'rb') as topo_f:
-            topo_obj = pickle.load(topo_f)
-        topology.set_topology(topo_obj)
+            if fault['rank'] != 1:
+                fault['name'] += f' ({fault["rank"]})'
+            topology = Topology(name=fault['name'], loc_err=True) 
+            topology.set_topology(topology_obj)
 
-        output_csv = errornous_fault_summary_dir / f'{ef}_node_summary.csv'
-        output_figure = errornous_fault_summary_dir / f'{ef}_figure.svg'
-        rank_and_output(topology, output_csv)
-        topology.draw(show=False, path=output_figure)
+            topologies.append(topology)
 
-        topologies.append(topology)
-
-    output_all_figures = localization_errors_csv.parent / f'all_figures.svg'
-    draw_all(topologies, output_all_figures)
-
-def rank_and_output(topology, output_csv):
-    ranked = topology.rank_nodes(order='in')
-    with open(output_csv, 'w') as f:
-        writer = csv.writer(f)
-        writer.writerow(['NODE SUMMARY'])
-        header = ['service']
-        header.extend(list(ranked[next(iter(ranked))].keys()))
-        writer.writerow(header)
-
-        for k, v in ranked.items():
-            row = [k]
-            row.extend(list(v.values()))
-            writer.writerow(row)
-        
-        
-        writer.writerow([])
-        writer.writerow(['EDGE SUMMARY'])
-        writer.writerow(['source','target', 'num_invo', 'anomalous', 'selected_features'])
-        for edge in topology.topology.edges(data=True):
-            anomalous = 0
-            if 'anomalous' in edge[2]:
-                anomalous = 1
-            selected_features = ''
-            if 'selected_features' in edge[2]:
-                selected_features = edge[2]['selected_features']
-            row = [edge[0], edge[1], edge[2]['num_invo'], anomalous, selected_features]
-            writer.writerow(row)
+        grouped_figures_dir = figures_dir / group_by
+        os.makedirs(grouped_figures_dir, exist_ok=True)
+        output_path = grouped_figures_dir / f'{group_key}.svg'
+        pprint(f'Drawing topologies for {group_key}:')
+        draw_all(topologies, output_path)
 
 def draw_all(topologies: list, output_all_figures):
-    nrows = 5
-    ncols = 6
-    fig_size = [64,36]
-    dpi = 160
-    _, axes = plt.subplots(nrows, ncols, figsize=fig_size, dpi=dpi, layout='tight')
-    for i, topology in enumerate(topologies):
-        print(math.floor(i / ncols), i % ncols)
+    ncols = 2
+    nrows = math.ceil(len(topologies)/2)
+    ax_w_unit = 13
+    ax_h_unit = 11
+    fig_size = [ncols*ax_w_unit,nrows*ax_h_unit]
+    _, axes = plt.subplots(nrows, ncols, figsize=fig_size, squeeze=False, layout='tight')
+    for i, topology in enumerate(tqdm(topologies)):
         ax = axes[math.floor(i / ncols), i % ncols]
         ax.axes.xaxis.set_visible(False)
         ax.axes.yaxis.set_visible(False)
