@@ -10,11 +10,11 @@ from collections import defaultdict
 
 def main():
     tra = TraceRcaAnalysisVisualize(experiment_name='microservice_faults_filtered')
-    tra.combined_data_histogram()
+    tra.get_cpu_timeseries()
     # tra.node_aggregated_histogram()
     # tra.historical_node_bar_graph()
     # tra.topology_bar_graph()
-    # _, df = tra.load_df_and_divide()
+    # tra.combined_data_histogram()
 
 class TraceRcaAnalysisVisualize(TraceRcaAnalysis):
     HISTORICAL_NODE_COLS = ['num_in','num_out','weight_in','weight_out','num_traces','num_unique_traces']

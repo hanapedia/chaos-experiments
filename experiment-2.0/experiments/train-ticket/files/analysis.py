@@ -2,6 +2,7 @@ import os
 import pickle
 import csv
 import pandas as pd
+import numpy as np
 from collections import defaultdict
 from pathlib import Path, PosixPath
 from tqdm import tqdm
@@ -33,8 +34,30 @@ class TraceRcaAnalysis:
 
         self.output_path = Path(f'{output}/{experiment_name}')
 
+    # get timeseries data of cpu metric of services that had cpu anomalies in fault injections that yielded low accuracy
+    # save the dataframe as pickle file
+    def get_cpu_timeseries(self):
+        # get the fault names for low accuracy cpu data 
+        la_cpu_results = self.get_low_accuracy_cpu_faults()
+
+        cpu_timestamp_df = pd.DataFrame()
+        for cpu_fault_name in la_cpu_results:
+            # retrieve the services with cpu anomalies
+            anomalous_cpu_service = self.get_anomalous_cpu_service_names(cpu_fault_name)
+
+            # load traces data for the fault injection
+            injected_invos = self.load_injected_invos(cpu_fault_name)
+
+            # retrieve cpu data of the anomalous services from the dataset
+            injected_invos = self.retrieve_cpu_data(cpu_fault_name, injected_invos,anomalous_cpu_service)
+            cpu_timestamp_df = pd.concat([cpu_timestamp_df, injected_invos])
+
+        # save timestamped cpu dataframe as pickle
+        with open(self.output_path / 'timestamped_cpu_data.pkl', 'wb') as f:
+            pickle.dump(cpu_timestamp_df, f)
+
     # return a list of faults that yielded low accurate rca and save it as a pickle
-    def get_low_accuracy(self):
+    def get_low_accuracy(self, save=True):
         summary_file= Path(f'{self.base_path}/summary/{self.experiment_name}/{self.experiment_name}_results.csv')
         summary_dict = self.load_results_file(summary_file)  
         low_accuracy = []
@@ -43,9 +66,53 @@ class TraceRcaAnalysis:
                 continue
             if fault_data['localizedat'] != '1':
                 low_accuracy.append(fault_name)  
+        if not save:
+            return low_accuracy
         with open(self.output_path / 'low_accuracy.pkl', 'wb') as la:
             pickle.dump(low_accuracy, la)
         
+    # filters the list of low accuracy results to include only the results of cpu faults
+    def get_low_accuracy_cpu_faults(self):
+        la_cpu_results = []
+        la_results = self.get_low_accuracy(save=False)
+        for la_result in la_results:
+            if 'cpu' not in la_result:
+                continue
+            la_cpu_results.append(la_result)
+        return la_cpu_results
+
+    # extract the selected features file content of a fault
+    def get_selected_features(self, fault_name):
+        features =  self.invos_dir / fault_name / 'features'
+        selected_features = {}
+        with open(features, 'r') as feat_f:
+            selected_features = eval("".join(feat_f.readlines()))
+        return selected_features
+
+    # get services with cpu anomalies for a cpu fault
+    # **assuming that the cpu usage metrics come from destination service
+    def get_anomalous_cpu_service_names(self, fault_name):
+        selected_features = self.get_selected_features(fault_name=fault_name)
+        anomalous_services = []
+        for invo, features in selected_features.items():
+            if 'cpu_use' not in features:
+                continue
+            anomalous_services.append(invo[1]) 
+        return anomalous_services 
+
+    # get cpu data and timestamps of the anomalous cpu services
+    # **assuming that the cpu usage metrics come from destination service
+    def retrieve_cpu_data(self, fault_name: str, invos_df: pd.DataFrame, services: list):
+        idx = pd.IndexSlice
+        _invo_df = pd.DataFrame()
+        for service in services:
+            reduced_df: pd.DataFrame = invos_df.loc[idx[:, service], ['target', 'start_timestamp', 'end_timestamp', 'cpu_use']]
+            reduced_df = reduced_df.assign(fault_name=np.repeat(fault_name, len(reduced_df)))
+            reduced_df = reduced_df.reset_index(drop=True)
+            reduced_df = reduced_df.set_index(['fault_name', 'target'])
+            _invo_df = pd.concat([_invo_df, reduced_df])
+        return _invo_df
+
     # format data summary into pandas dataframe
     def format_data(self):
         # prepare file name for results csv and read it
@@ -98,14 +165,12 @@ class TraceRcaAnalysis:
         data_map = {}
         data_map['rca_result'] = summary_data  
         # prepare injected traces
-        injected_trace_file = self.injected_traces_dir / f'{fault_name}.pkl' 
-        injected_traces = self.load_pickle_file(injected_trace_file)
+        injected_traces = self.load_injected_traces(fault_name)
         # convert service names in traces to simple names
         injected_traces = self.convert_trace_names(injected_traces) 
 
         # prepare injected invos
-        injected_invos_file = self.invos_dir / fault_name / 'anomalies.pkl'
-        injected_invos = self.load_pickle_file(injected_invos_file)
+        injected_invos = self.load_injected_invos(fault_name)
 
         data_map['traces'] = injected_traces 
         data_map['invocations'] = injected_invos
@@ -371,7 +436,20 @@ class TraceRcaAnalysis:
                 fault_results[fault_name] = dict(root_cause=row[0], fault_type=row[1], fault_date= row[2], predictions=row[3], localizedat=row[7])
         return fault_results
 
-    # utility function to convert csv containeing results data to dict of dicts 
+    # utility function to load injected traces data for a fault injection
+    def load_injected_traces(self, fault_name: Path) -> list:
+        # prepare injected traces
+        injected_trace_file = self.injected_traces_dir / f'{fault_name}.pkl' 
+        injected_traces = self.load_pickle_file(injected_trace_file)
+        return injected_traces
+
+    # utility function to load injected invocation data for a fault injection
+    def load_injected_invos(self, fault_name: Path) -> pd.DataFrame:
+        injected_invos_file = self.invos_dir / fault_name / 'anomalies.pkl'
+        injected_invos = self.load_pickle_file(injected_invos_file)
+        return injected_invos
+
+    # utility function to load historical traces data 
     def load_historical_traces(self, input_dir: Path):
         traces = []
         trace_files = self.dirs_to_files(input_dir) 
@@ -379,7 +457,7 @@ class TraceRcaAnalysis:
             traces.extend(self.load_pickle_file(trace_file))
         return traces
 
-    # utility function to convert csv containeing results data to dict of dicts 
+    # utility function to load historical invocations data 
     def load_historical_invos(self, input_dir: Path):
         invos = pd.DataFrame()
         invo_files = self.dirs_to_files(input_dir) 
