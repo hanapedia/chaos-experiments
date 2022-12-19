@@ -10,11 +10,11 @@ from collections import defaultdict
 
 def main():
     tra = TraceRcaAnalysisVisualize(experiment_name='microservice_faults_filtered')
-    tra.get_cpu_timeseries()
-    # tra.node_aggregated_histogram()
-    # tra.historical_node_bar_graph()
-    # tra.topology_bar_graph()
-    # tra.combined_data_histogram()
+    # tra.get_cpu_timeseries()
+    tra.node_aggregated_histogram()
+    tra.historical_node_bar_graph()
+    tra.topology_bar_graph()
+    tra.combined_data_histogram()
 
 class TraceRcaAnalysisVisualize(TraceRcaAnalysis):
     HISTORICAL_NODE_COLS = ['num_in','num_out','weight_in','weight_out','num_traces','num_unique_traces']
@@ -108,7 +108,7 @@ class TraceRcaAnalysisVisualize(TraceRcaAnalysis):
 
         # aggregate into new dataframe
         idx = pd.IndexSlice
-        self.NODE_COLS = self.get_columns(df)
+        self.NODE_COLS = df.columns
         df_dict = defaultdict(list)
         for fault_idx in reduced_idx:
             fault_idx = list(fault_idx)
@@ -205,6 +205,46 @@ class TraceRcaAnalysisVisualize(TraceRcaAnalysis):
         except:
             pass
 
+    # draw histogram
+    def draw_graphs_and_save(self, title_prefix: str, **kwargs):
+        if 'df' not in kwargs:
+            raise Exception('Provide at least one dataframe')
+        df = kwargs['df']
+
+        la_df = pd.DataFrame()
+        colors = []
+        if 'la_df' in kwargs:
+            la_df = kwargs['la_df']
+        else:
+            colors = self.get_colors_list(df=df)
+
+        ncols = 2
+        if 'ncols' in kwargs:
+            ncols = kwargs.ncols
+            
+        cols = df.columns
+        if 'root_cause_service' in cols:
+            cols = self.get_columns(df)
+
+        pprint(cols)
+        # get subplots
+        nrows = math.ceil(len(cols)/ncols)
+        axes = self.get_subplot(nrows, ncols)
+        for i, col in enumerate(cols):
+            ax = axes[math.floor(i / ncols), i % ncols]
+            ax.set_title(f'{title_prefix} {col}')
+            if 'la_df' in kwargs:
+                data_normal = df.loc[:, col].values
+                data_la = la_df.loc[:, col].values
+                self.draw_histogram(data_normal=data_normal, data_la=data_la, ax=ax)
+            else:
+                df = df.sort_values(by=col)
+                ax.tick_params(labelsize=6)
+                self.draw_bar(df=df, color=colors, ax=ax, y=col, title=f'{title_prefix}: {col}')
+
+        plt.savefig(self.output_path/f'{title_prefix}.svg')
+
+
 # bar graph with each bar representing each node, services with low accuracy visualized
 # data: historical node data
 # columns:
@@ -225,24 +265,8 @@ class TraceRcaAnalysisVisualize(TraceRcaAnalysis):
         df_file = self.output_path / 'historical_node_df.pkl'
         df = self.load_dataframe(df_file)
         df = df.reset_index(level=[0,1,2])
-        self.HISTORICAL_NODE_COLS = self.get_columns(df)
 
-        # load low_accuracy data 
-        # set color for bars
-        colors = self.get_colors_list(df=df)
-
-        # get subplots
-        ncols = 2
-        nrows = math.ceil(len(self.HISTORICAL_NODE_COLS)/ncols)
-        axes = self.get_subplot(nrows, ncols)
-        for i, col in enumerate(self.HISTORICAL_NODE_COLS):
-            df = df.sort_values(by=col)
-            ax = axes[math.floor(i / ncols), i % ncols]
-            self.draw_bar(df=df, color=colors, ax=ax, y=col, title=f'historical node {col}')
-        plt.savefig(self.output_path/'historical_node_bar.svg')
-        # plt.show()
-        
-
+        self.draw_graphs_and_save(title_prefix='historical_node_bar', df=df)
 
 # histogram of aggeregated data from each fault
 # data: injected node data aggregated by faults 
@@ -264,23 +288,8 @@ class TraceRcaAnalysisVisualize(TraceRcaAnalysis):
         df, la_df = self.load_df_and_divide()
         df = self.aggregate_node_data(df)
         la_df = self.aggregate_node_data(la_df)
-        self.NODE_COLS = self.get_columns(df)
-        # exclude root cause and localized at columns
-        self.NODE_COLS = self.NODE_COLS[:-2]
 
-        # get subplots
-        ncols = 2
-        nrows = math.ceil(len(self.NODE_COLS)/ncols)
-        axes = self.get_subplot(nrows, ncols)
-        for i, col in enumerate(self.NODE_COLS):
-            data_normal = df.loc[:, col].values
-            data_la = la_df.loc[:, col].values
-            ax = axes[math.floor(i / ncols), i % ncols]
-            ax.set_title(f'node {col}')
-            self.draw_histogram(data_normal=data_normal, data_la=data_la, ax=ax)
-
-        plt.savefig(self.output_path/'node_bar.svg')
-        # plt.show()
+        self.draw_graphs_and_save(title_prefix='node_hist', df=df, la_df=la_df)
 
 # bar graph of data from each topology
 # data: injected and historical topology data
@@ -305,22 +314,8 @@ class TraceRcaAnalysisVisualize(TraceRcaAnalysis):
         df_file = self.output_path / 'topology_df.pkl'
         df = self.load_dataframe(df_file)
         df = self.add_topology_columns(df)
-        self.TOPOLOGY_COLS = self.get_columns(df)
 
-        # load low_accuracy data 
-        # set color for bars
-        colors = self.get_colors_list(df=df)
-
-        # get subplots
-        ncols = 2
-        nrows = math.ceil(len(self.TOPOLOGY_COLS) / ncols)
-        axes = self.get_subplot(nrows, ncols)
-        for i, col in enumerate(self.TOPOLOGY_COLS):
-            df = df.sort_values(by=col)
-            ax = axes[math.floor(i / ncols), i % ncols]
-            ax.tick_params(labelsize=6)
-            self.draw_bar(df=df, color=colors, ax=ax, y=col, title=f'Topology: {col}')
-        plt.savefig(self.output_path/'topology_bar.svg')
+        self.draw_graphs_and_save(title_prefix='topology_bar', df=df)
 
 # histograms of combined data
 # data: injected node data and injected topology data 
@@ -346,21 +341,8 @@ class TraceRcaAnalysisVisualize(TraceRcaAnalysis):
         # compute ratios and create new dataframes
         combined_df = self.create_combined_df(topology_df=topology_df, node_df=node_df)
         la_combined_df = self.create_combined_df(topology_df=la_topology_df, node_df=la_node_df)
-        pprint(la_combined_df)
 
-        combined_cols = combined_df.columns
-        # get subplots
-        ncols = 2
-        nrows = math.ceil(len(combined_cols)/ncols)
-        axes = self.get_subplot(nrows, ncols)
-        for i, col in enumerate(combined_cols):
-            data_normal = combined_df.loc[:, col].values
-            data_la = la_combined_df.loc[:, col].values
-            ax = axes[math.floor(i / ncols), i % ncols]
-            ax.set_title(f'combined {col}')
-            self.draw_histogram(data_normal=data_normal, data_la=data_la, ax=ax)
-
-        plt.savefig(self.output_path/'combined_hist.svg')
+        self.draw_graphs_and_save(title_prefix='combined_hist', df=combined_df, la_df=la_combined_df)
 
 if __name__ == "__main__":
     main()
