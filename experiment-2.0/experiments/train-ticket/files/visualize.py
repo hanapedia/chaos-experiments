@@ -11,10 +11,11 @@ from collections import defaultdict
 def main():
     tra = TraceRcaAnalysisVisualize(experiment_name='microservice_faults_filtered')
     # tra.get_cpu_timeseries()
-    tra.node_aggregated_histogram()
+    # tra.cpu_line_graph()
+    # tra.node_aggregated_histogram()
     tra.historical_node_bar_graph()
-    tra.topology_bar_graph()
-    tra.combined_data_histogram()
+    # tra.topology_bar_graph()
+    # tra.combined_data_histogram()
 
 class TraceRcaAnalysisVisualize(TraceRcaAnalysis):
     HISTORICAL_NODE_COLS = ['num_in','num_out','weight_in','weight_out','num_traces','num_unique_traces']
@@ -82,7 +83,7 @@ class TraceRcaAnalysisVisualize(TraceRcaAnalysis):
         # set color for bars
         la_file = self.output_path / 'low_accuracy.pkl'
         low_acc_results = self.load_low_accuracy_results(la_file)
-        if len(df.index) == 1:
+        if len(df.index.names) == 1:
             low_acc_results = list(map(lambda x: x.split('_')[0], low_acc_results))
         else:
             low_acc_results = list(map(lambda x: tuple(x.split('_')), low_acc_results))
@@ -206,6 +207,14 @@ class TraceRcaAnalysisVisualize(TraceRcaAnalysis):
             pass
 
     # draw histogram
+    def draw_line(self, ax: plt.Axes, x: list, y: list, **kwargs):
+        try:
+            ax.plot(x,y, **kwargs)
+            pass
+        except:
+            pass
+
+    # draw histogram
     def draw_graphs_and_save(self, title_prefix: str, **kwargs):
         if 'df' not in kwargs:
             raise Exception('Provide at least one dataframe')
@@ -226,7 +235,6 @@ class TraceRcaAnalysisVisualize(TraceRcaAnalysis):
         if 'root_cause_service' in cols:
             cols = self.get_columns(df)
 
-        pprint(cols)
         # get subplots
         nrows = math.ceil(len(cols)/ncols)
         axes = self.get_subplot(nrows, ncols)
@@ -343,6 +351,37 @@ class TraceRcaAnalysisVisualize(TraceRcaAnalysis):
         la_combined_df = self.create_combined_df(topology_df=la_topology_df, node_df=la_node_df)
 
         self.draw_graphs_and_save(title_prefix='combined_hist', df=combined_df, la_df=la_combined_df)
+
+# plot of cpu data during cpu anomaly injection 
+# data: timestamped cpu data from low accuracy cpu anomaly injected invocation data
+# each line / scatter plot represents cpu data form each services that had cpu anomalies 
+    def cpu_line_graph(self):
+        # load timestamped cpu data 
+        cpu_df_file = self.output_path / 'timestamped_cpu_data.pkl'
+        cpu_df = self.load_dataframe(cpu_df_file)
+
+        idx = pd.IndexSlice
+        indexes = list(set(cpu_df.index))
+        # get subplots
+        ncols = 2
+        nrows = math.ceil(len(indexes)/ncols)
+        axes = self.get_subplot(nrows, ncols)
+        for i, indice in enumerate(indexes):
+            ax = axes[math.floor(i / ncols), i % ncols]
+            ax.set_title(f'cpu anomalous usage: {indice}')
+            ax.set_ylim([0,1.25])
+
+            _cpu_df = cpu_df.loc[indice]
+            _cpu_df = _cpu_df.set_index('target')
+            _cpu_df = _cpu_df.sort_values(by='med_timestamp')
+            targets = list(set(_cpu_df.index))
+            for target in targets:
+                x = _cpu_df.loc[target, 'med_timestamp'].values
+                y = _cpu_df.loc[target, 'cpu_use'].values
+                self.draw_line(ax=ax, x=x, y=y, label=target, marker='o')
+            ax.legend(loc='best') 
+            # pprint(_cpu_df.sort_values(by='med_timestamp'))
+        plt.savefig(self.output_path/f'cpu_line.svg')
 
 if __name__ == "__main__":
     main()

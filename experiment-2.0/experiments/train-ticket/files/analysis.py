@@ -52,6 +52,8 @@ class TraceRcaAnalysis:
             injected_invos = self.retrieve_cpu_data(cpu_fault_name, injected_invos,anomalous_cpu_service)
             cpu_timestamp_df = pd.concat([cpu_timestamp_df, injected_invos])
 
+        # sort index
+        cpu_timestamp_df = cpu_timestamp_df.sort_index()
         # save timestamped cpu dataframe as pickle
         with open(self.output_path / 'timestamped_cpu_data.pkl', 'wb') as f:
             pickle.dump(cpu_timestamp_df, f)
@@ -107,11 +109,25 @@ class TraceRcaAnalysis:
         _invo_df = pd.DataFrame()
         for service in services:
             reduced_df: pd.DataFrame = invos_df.loc[idx[:, service], ['target', 'start_timestamp', 'end_timestamp', 'cpu_use']]
+            # add column for fault name
             reduced_df = reduced_df.assign(fault_name=np.repeat(fault_name, len(reduced_df)))
             reduced_df = reduced_df.reset_index(drop=True)
-            reduced_df = reduced_df.set_index(['fault_name', 'target'])
+            # add timestamp avg column
+            reduced_df = self.calc_timestamp_med(reduced_df)
+            reduced_df = reduced_df.sort_values(by='med_timestamp')
+            # reduced_df = reduced_df.set_index(['fault_name', 'target'], drop=True)
+            reduced_df = reduced_df.set_index(['fault_name'], drop=True)
             _invo_df = pd.concat([_invo_df, reduced_df])
         return _invo_df
+
+    # calculate the median between start_timestamp and end_timestamp 
+    def calc_timestamp_med(self, invos_df: pd.DataFrame):
+        start_timestamp = invos_df.loc[:, 'start_timestamp']
+        end_timestamp = invos_df.loc[:, 'end_timestamp']
+        med_timestamp_col = (start_timestamp + end_timestamp) / 2
+        
+        invos_df = invos_df.assign(med_timestamp=med_timestamp_col)
+        return invos_df
 
     # format data summary into pandas dataframe
     def format_data(self):
