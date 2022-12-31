@@ -1,8 +1,10 @@
-from analysis import TraceRcaAnalysis
+import matplotlib.font_manager as fm
 from pprint import pprint
 def main():
-    tra = TraceRcaAnalysis(experiment_name='microservice_faults_filtered')
-    tra.format_data()
+    fm.fontManager.addfont('/Users/hirokihanada/Downloads/MS Mincho.ttf')
+    font_list = [f.name for f in fm.fontManager.ttflist]
+
+    pprint(font_list)
 
 if __name__ == "__main__":
     main()
