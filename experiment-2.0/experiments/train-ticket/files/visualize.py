@@ -23,7 +23,7 @@ class TraceRcaAnalysisVisualize(TraceRcaAnalysis):
     HISTORICAL_NODE_COLS = ['num_in','num_out','weight_in','weight_out','num_traces','num_unique_traces']
     NODE_COLS = ['num_in', 'num_out', 'weight_in', 'weight_out', 'num_anomalous_in', 'num_anomalous_out', 'weight_anomalous_in', 'weight_anomalous_out', 'num_traces', 'num_anomalous_traces', 'num_unique_traces', 'num_unique_anomalous_traces']
     TOPOLOGY_COLS = ['num_nodes', 'num_edges', 'num_anomalous_edges', 'weight_edges', 'weight_anomalous_edges', 'num_traces', 'num_unique_traces', 'num_unique_anomalous_traces']
-    LOW_ACC_COLOR = 'darkorange'
+    LOW_ACC_COLOR = 'orangered'
     NORMAL_COLOR = 'mediumaquamarine'
 
     # tests
@@ -212,10 +212,10 @@ class TraceRcaAnalysisVisualize(TraceRcaAnalysis):
     def draw_ecdf(self, data_normal: list, data_la: list, ax: plt.Axes, **kwargs):
         la_color = clr.to_rgba(self.LOW_ACC_COLOR, 0.7)
         ax.hist(data_normal, bins=50, color=self.NORMAL_COLOR, cumulative=True, density=True, histtype='step', linestyle='-', **kwargs)
-        ax.hist(data_la, bins=50, color=la_color, cumulative=True, density=True, histtype='step', linestyle=':', **kwargs)
+        ax.hist(data_la, bins=50, color=la_color, cumulative=True, density=True, histtype='step', linestyle='--', **kwargs)
         # labels 
         label_n, = ax.plot([], [],color=self.NORMAL_COLOR, label='high accuracy', linestyle='-', **kwargs)
-        label_la, = ax.plot([], [],color=la_color, label='low accuracy', linestyle=':', **kwargs)
+        label_la, = ax.plot([], [],color=la_color, label='low accuracy', linestyle='--', **kwargs)
         ax.legend(handles=[label_n, label_la],loc='upper left')
 
     # draw line
@@ -414,20 +414,28 @@ class TraceRcaAnalysisVisualize(TraceRcaAnalysis):
         fm.fontManager.addfont('./files/MS Mincho.ttf')
         font_size = 36
         font_family = 'MS Mincho'
+        line_width = 5
 
-        _ = plt.figure(figsize=[20,10])
+        x_label = 'Ratio of Number of Anomalous Traces Through Root Cause \nand Number of Total Anomalous Traces'
+        y_label = 'Frequency'
+        col_name = 'node_ano_trace_topo_ano_trace_ratio'
+        file_name = 'trace_rate_big.png'
+
+        dpi = 100
+        _ = plt.figure(figsize=[16,9], dpi=dpi)
         ax: plt.Axes = plt.gca() 
         
         plt.rcParams['font.size'] = font_size
         plt.rcParams['font.family'] = font_family
-        plt.xlabel('Anomlaous invocations to root cause serivce / total anomalous invocations', fontdict={'size': font_size, 'family': font_family})
-        plt.ylabel('Frequency', fontdict={'size': font_size, 'family': font_family})
+        plt.rcParams['font.weight'] = 'bold'
+        plt.xlabel(x_label, fontdict={'size': font_size, 'family': font_family})
+        plt.ylabel(y_label, fontdict={'size': font_size, 'family': font_family})
         plt.xticks(fontsize=font_size, fontfamily=font_family)
         plt.yticks(fontsize=font_size, fontfamily=font_family)
 
-        data_normal = combined_df.loc[:,'node_ano_in_w_topo_ano_edge_w_ratio'].values
-        data_la = la_combined_df.loc[:,'node_ano_in_w_topo_ano_edge_w_ratio'].values
-        self.draw_ecdf(data_normal=data_normal, data_la=data_la, ax=ax, linewidth=3.5,)
-        plt.savefig(self.output_path/'invo_rate.png')
+        data_normal = combined_df.loc[:,col_name].values
+        data_la = la_combined_df.loc[:,col_name].values
+        self.draw_ecdf(data_normal=data_normal, data_la=data_la, ax=ax, linewidth=line_width,)
+        plt.savefig(self.output_path/file_name, bbox_inches="tight")
 if __name__ == "__main__":
     main()
