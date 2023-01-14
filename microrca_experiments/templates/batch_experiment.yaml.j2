@@ -43,7 +43,7 @@
         - name: Generate chaos experiment for {{ chain }}
           changed_when: true
           ansible.builtin.command:
-            cmd: "ansible-playbook generate_experiment.yaml --extra-vars 'config_file=/chain/{{ chain }}.yaml'" 
+            cmd: "ansible-playbook generate_experiment.yaml --extra-vars '@./configs/chain/{{ chain }}.yaml'" 
             chdir: {{ path.generate_experiment }}
 
       rescue:
@@ -168,7 +168,7 @@
         - name: Generate chaos experiment for {{ fanout }}
           changed_when: true
           ansible.builtin.command:
-            cmd: "ansible-playbook generate_experiment.yaml --extra-vars 'config_file=/fanout/{{ fanout }}.yaml'" 
+            cmd: "ansible-playbook generate_experiment.yaml --extra-vars '@./configs/fanout/{{ fanout }}.yaml'" 
             chdir: {{ path.generate_experiment }}
 
       rescue:

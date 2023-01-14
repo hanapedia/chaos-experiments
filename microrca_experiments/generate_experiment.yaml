@@ -2,8 +2,8 @@
 ---
 - name: Set up chaos experiment
   hosts: localhost
-  vars_files:
-    - "./configs/{{ config_file }}"
+  # vars_files:
+  #   - "./configs/{{ config_file }}"
   tasks:
     - name: Generate kubernetes manifests
       block:
