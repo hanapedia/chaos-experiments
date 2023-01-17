@@ -1,0 +1,8 @@
+# vim: set filetype=yaml.ansible :
+---
+- name: Prepare directories
+  vars:
+    add: hi from inner role
+    combined: "received: {{ passed }}, added:{{ add }}"
+  ansible.builtin.debug:
+    var: combined

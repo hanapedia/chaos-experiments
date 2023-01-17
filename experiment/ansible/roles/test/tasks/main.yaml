@@ -1,0 +1,30 @@
+# vim: set filetype=yaml.ansible :
+---
+- name: Prepare directories
+  ansible.builtin.set_fact:
+    command: 
+      - python
+      - main.py
+      - -o
+
+- name: Define command
+  when: false
+  ansible.builtin.set_fact:
+    command: "{{ command + ['-a']}}"
+
+- name: Prepare directories
+  vars:
+  ansible.builtin.debug:
+    var: command
+
+# - name: playbook dir relative
+#   ansible.builtin.file:
+#     path: "{{ playbook_dir }}/../out"
+#     state: directory
+
+- name: Include role from role
+  ansible.builtin.include_role:
+    name: another_test
+  vars:
+    passed: Hi from upper role
+

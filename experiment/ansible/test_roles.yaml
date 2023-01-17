@@ -1,0 +1,19 @@
+# vim: set filetype=yaml.ansible :
+---
+- name: Run experiment 
+  hosts: localhost
+  tasks:
+    - name: Test TraceRca data collection
+      ansible.builtin.include_role:
+        name: tracerca_data_collection
+      vars:
+        newvar: newvar
+        variant: "{{ variant }}"
+        fault: "{{ fault }}"
+      loop: "{{ benchmarks.variants }}"
+      loop_control:
+        loop_var: variant
+
+    - name: Test role in role
+      ansible.builtin.include_role:
+        name: test

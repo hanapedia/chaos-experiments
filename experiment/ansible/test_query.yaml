@@ -1,0 +1,28 @@
+# vim: set filetype=yaml.ansible :
+---
+- name: Testing
+  hosts: localhost
+  vars:
+    variant_name: foc5s
+  tasks:
+    - name: Ensure that the base directory exists
+      ansible.builtin.file:
+        path: "{{ base_path }}"
+        state: directory
+        mode: 0755
+
+    - name: Ensure that the base directory exists
+      ansible.builtin.file:
+        path: "{{ base_path }}/{{ variant_name }}"
+        state: directory
+        mode: 0755
+
+    - name: Test query_traces role
+      ansible.builtin.include_role:
+        name: query_traces
+      vars:
+        subdir: uninjected
+        filename: history.pkl
+        interval: 60
+        append: true
+
