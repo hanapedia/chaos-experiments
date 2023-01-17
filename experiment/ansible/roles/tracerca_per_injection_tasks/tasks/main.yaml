@@ -1,0 +1,27 @@
+# vim: set filetype=yaml.ansible :
+---
+- name: Run trace rca for an injection
+  vars:
+    results_subdir: "{{ working_dir }}/results/{{ injected_file.split('.')[0]}}"
+    injected_invos: "{{ working_dir }}/{{ datasets_dir }}/injected/{{ injected_file }}" 
+  block: 
+    - name: Prepare directories
+      ansible.builtin.file:
+        path: "{{ results_subdir }}"
+        state: directory
+        mode: 0755
+
+    - name: Encode history traces into invocations
+      ansible.builtin.include_role:
+        name: tracerca_encode_traces
+      vars:
+        input_path: "{{ working_dir }}/{{ datasets_dir }}/injected/{{ injected_file }}" 
+        output_path: "{{ injected_invos }}" 
+
+    - name: Run tracerca
+      when: not encoding_failed
+      ansible.builtin.include_role:
+        name: tracerca_execute
+      vars:
+        input_path: "{{ injected_invos }}" 
+        output_path: "{{ results_subdir }}/results.pkl"

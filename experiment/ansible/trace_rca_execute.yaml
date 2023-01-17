@@ -1,0 +1,18 @@
+# vim: set filetype=yaml.ansible :
+---
+- name: Run experiment 
+  hosts: localhost
+  tasks:
+    - name: Ensure that the base directory exists
+      ansible.builtin.file:
+        path: "{{ base_path }}"
+        state: directory
+        mode: 0755
+
+    - name: Test TraceRca data collection
+      ansible.builtin.include_role:
+        name: tracerca_per_variant_tasks
+      loop: "{{ benchmarks.variants }}"
+      loop_control:
+        loop_var: variant
+

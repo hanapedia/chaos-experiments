@@ -1,0 +1,50 @@
+# vim: set filetype=yaml.ansible :
+---
+- name: Run trace encoding script
+  vars:
+    all_features: false
+  block: 
+    - name: Init indicator
+      ansible.builtin.set_fact:
+        encoding_failed: false
+
+    - name: Define command
+      ansible.builtin.set_fact:
+        command:
+          - python
+          - ./files/run_trace_encoding.py
+          - -i
+          - "{{ input_path }}"
+          - -o
+          - "{{ output_path }}"
+
+    - name: Define command
+      when: all_features
+      ansible.builtin.set_fact:
+        command: "{{ command + ['-a']}}"
+
+    - name: Execute script
+      changed_when: true
+      ansible.builtin.command:
+        argv: "{{ command }}"
+  rescue:
+    - name: Note failed task
+      ansible.builtin.lineinfile:
+        path: "{{ base_path }}/failed"
+        line: "FAILED:{{ variant_name }}:{{ ansible_failed_task }}"
+        create: yes
+
+    - name: Toggle indicator
+      ansible.builtin.set_fact:
+        encoding_failed: true
+
+  always:
+    - name: Get the execution end time
+      register: date_now
+      ansible.builtin.command: date
+
+    - name: Note the time
+      ansible.builtin.lineinfile:
+        path: "{{ base_path }}/rca_log"
+        line: "{{ variant_name }} encoding: {{ date_now.stdout }}"
+        create: yes

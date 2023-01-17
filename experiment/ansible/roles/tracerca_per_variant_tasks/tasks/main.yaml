@@ -1,0 +1,36 @@
+# vim: set filetype=yaml.ansible :
+---
+- name: Prepare directories
+  vars:
+    working_dir: "{{ base_path }}/{{ variant.name }}" 
+    datasets_dir: datasets
+    uninjected_invos: "{{ working_dir }}/{{ datasets_dir }}/uninjected/history_invos.pkl" 
+  block:
+    - name: Get injected data names
+      ansible.builtin.command: "ls {{ working_dir }}/{{ datasets_dir }}/injected"
+      register: injected_data
+      changed_when: true
+
+    - name: Create results directory
+      ansible.builtin.file:
+        path: "{{ working_dir }}/results"
+        state: directory
+        mode: 0755
+
+    - name: Encode history traces into invocations
+      ansible.builtin.include_role:
+        name: tracerca_encode_traces
+      vars:
+        input_path: "{{ working_dir }}/{{ datasets_dir }}/uninjected/history.pkl" 
+        output_path: "{{ uninjected_invos }}" 
+        variant_name: "{{ variant.name }}"
+
+    - name: Run tracerca for each injection
+      when: not encoding_failed
+      ansible.builtin.include_role:
+        name: tracerca_per_injection_tasks
+      vars:
+        variant_name: "{{ variant.name }}"
+      loop: "{{ injected_data.stdout_lines }}" 
+      loop_control:
+        loop_var: injected_file
