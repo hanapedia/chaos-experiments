@@ -1,0 +1,69 @@
+# vim: set filetype=yaml.ansible :
+---
+- name: Prepare directories
+  block:
+    - name: Initialize Error variable
+      ansible.builtin.set_fact:
+        deployed: false
+
+    - name: Initialize Error variable
+      ansible.builtin.set_fact:
+        abort: false
+
+    - name: Ensure that the directory for the variant exist
+      ansible.builtin.file:
+        path: "{{ base_path }}/{{ variant.name }}"
+        state: directory
+        mode: 0755
+
+- name: Deploy 
+  when: not abort
+  block:
+    - name: Apply kubectl config to deploy benchmark and loadgenerator
+      ansible.builtin.include_role:
+        name: deploy_benchmark
+      vars:
+        variant_name: "{{ variant.name }}"
+
+    - name: Sleep for 30 seconds to wait for deployments to complete
+      ansible.builtin.wait_for:
+        timeout: 30
+      tags:
+        - sleep
+
+- name: Query data
+  when: deployed
+  block:
+    - name: Query uninjected trace data
+      ansible.builtin.include_role:
+        name: query_traces
+      vars:
+        variant_name: "{{ variant.name }}"
+        interval: "{{ query.interval }}"
+        subdir: uninjected
+        filename: history.pkl
+        append: true
+      loop: "{{ range(0, query.count, 1) | list }}"
+
+    - name: Query injected trace data
+      ansible.builtin.include_role:
+        name: injected_query_traces
+      vars:
+        variant_name: "{{ variant.name }}"
+        variant_type: "{{ variant.type }}"
+        identifier: "{{ item }}"
+      loop: "{{ range(1, variant.num_services + 1, 1) | list }}"
+
+- name: Delete
+  block:
+    - name: Apply kubectl config to deploy benchmark and loadgenerator
+      ansible.builtin.include_role:
+        name: delete_benchmark
+      vars:
+        variant_name: "{{ variant.name }}"
+
+    - name: Sleep for 30 seconds to wait for deployments to complete
+      ansible.builtin.wait_for:
+        timeout: 30
+      tags:
+        - sleep

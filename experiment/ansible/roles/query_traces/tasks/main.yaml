@@ -1,0 +1,66 @@
+# vim: set filetype=yaml.ansible :
+---
+- name: Ensure that the directory to dump the result datasets exist
+  ansible.builtin.file:
+    path: "{{ base_path }}/{{ variant_name }}/datasets"
+    state: directory
+    mode: 0755
+
+- name: Ensure that the dataset subdirectory exist
+  ansible.builtin.file:
+    path: "{{ base_path }}/{{ variant_name }}/datasets/{{ subdir }}"
+    state: directory
+    mode: 0755
+
+- name: Define command
+  ansible.builtin.set_fact:
+    command:
+      - python
+      - main.py
+      - -o
+      - "{{ playbook_dir }}/{{ base_path }}/{{ variant_name }}/datasets/{{ subdir }}/{{ filename }}"
+      - -l
+      - "{{ interval | int }}"
+
+- name: Define command
+  when: append
+  ansible.builtin.set_fact:
+    command: "{{ command + ['-a']}}"
+    
+- name: Query
+  block:
+    - name: Sleep for x interval seconds 
+      ansible.builtin.wait_for:
+        timeout: "{{ interval }}"
+      tags:
+        - sleep
+
+    - name: Query using python script
+      ansible.builtin.command:
+        chdir: "{{ query.script_dir }}"
+        argv: "{{ command }}"
+      register: output
+
+    - name: Log number of traces retrieved
+      ansible.builtin.lineinfile:
+        path: "{{ base_path }}/log"
+        line: "{{ variant_name }} query: {{ output.stdout }} traces"
+        create: yes
+
+  rescue:
+    - name: Note failed task
+      ansible.builtin.lineinfile:
+        path: "{{ base_path }}/failed"
+        line: "FAILED:{{ variant_name }}:{{ ansible_failed_task }}"
+        create: yes
+
+  always:
+    - name: Get the execution end time
+      register: date_now
+      ansible.builtin.command: date
+
+    - name: Note the time
+      ansible.builtin.lineinfile:
+        path: "{{ base_path }}/log"
+        line: "{{ variant_name }} query: {{ date_now.stdout }}"
+        create: yes
