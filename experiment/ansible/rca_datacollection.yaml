@@ -9,9 +9,9 @@
         state: directory
         mode: 0755
 
-    - name: Test TraceRca data collection
+    - name: Data collection
       ansible.builtin.include_role:
-        name: tracerca_data_collection
+        name: data_collection
       loop: "{{ benchmarks.variants }}"
       loop_control:
         loop_var: variant

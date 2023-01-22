@@ -1,50 +1,51 @@
 # vim: set filetype=yaml.ansible :
 ---
+- name: Define command
+  ansible.builtin.set_fact:
+    output_dir: "{{ base_path }}/{{ variant_name }}/datasets/microrca/{{ subdir }}"
+
 - name: Ensure that the directory to dump the result datasets exist
   ansible.builtin.file:
-    path: "{{ base_path }}/{{ variant_name }}/datasets"
+    path: "{{ base_path }}/{{ variant_name }}/datasets/microrca/"
     state: directory
     mode: 0755
 
-- name: Ensure that the dataset subdirectory exist
+- name: Ensure that the dataset subdirectory for the fault exist
   ansible.builtin.file:
-    path: "{{ base_path }}/{{ variant_name }}/datasets/{{ subdir }}"
+    path: "{{ output_dir }}"
     state: directory
     mode: 0755
 
-- name: Define command
+- name: Define query command
   ansible.builtin.set_fact:
     command:
       - python
-      - main.py
+      - query.py
       - -o
-      - "{{ playbook_dir }}/{{ base_path }}/{{ variant_name }}/datasets/{{ subdir }}/{{ filename }}"
+      - "{{ playbook_dir }}/{{ output_dir }}"
+      - -n
+      - "{{ variant_name }}"
       - -l
-      - "{{ interval | int }}"
+      - "{{ interval }}"
+      - -e
+      - "{{ end_time }}"
 
-- name: Define command
-  when: append
-  ansible.builtin.set_fact:
-    command: "{{ command + ['-a']}}"
-    
 - name: Query
   block:
-    - name: Sleep for x interval seconds 
-      ansible.builtin.wait_for:
-        timeout: "{{ interval }}"
-      tags:
-        - sleep
+    - name: Prepare node dict
+      ansible.builtin.shell:
+        cmd: kubectl get nodes -o wide | awk '{if (NR!=1) print $1 "," $6":9100"}' > "{{ output_dir }}"/node_dict.csv
 
     - name: Query using python script
       ansible.builtin.command:
-        chdir: "{{ query.script_dir }}"
+        chdir: "{{ microrca_query.script_dir }}"
         argv: "{{ command }}"
       register: output
 
-    - name: Log number of traces retrieved
+    - name: Log the output 
       ansible.builtin.lineinfile:
         path: "{{ base_path }}/log"
-        line: "{{ variant_name }} query: {{ output.stdout }} traces"
+        line: "{{ variant_name }}/{{ subdir }} microrca_query: {{ output.stdout }}"
         create: yes
 
   rescue:
@@ -62,5 +63,5 @@
     - name: Note the time
       ansible.builtin.lineinfile:
         path: "{{ base_path }}/log"
-        line: "{{ variant_name }} query: {{ date_now.stdout }}"
+        line: "{{ variant_name }}/{{ subdir }} microrca_query: {{ date_now.stdout }}"
         create: yes

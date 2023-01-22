@@ -2,8 +2,9 @@
 ---
 - name: Run trace rca for an injection
   vars:
-    results_subdir: "{{ working_dir }}/results/{{ injected_file.split('.')[0]}}"
-    injected_invos: "{{ working_dir }}/{{ datasets_dir }}/injected/{{ injected_file }}" 
+    results_subdir: "{{ results_dir }}/{{ injected_file.split('.')[0] }}/tracerca"
+    injected_invos_dir: "{{ working_dir }}/datasets/tracerca/injected_invos" 
+    injected_invos: "{{ injected_invos_dir }}/{{ injected_file.split('.')[0] }}_invos.pkl" 
   block: 
     - name: Prepare directories
       ansible.builtin.file:
@@ -11,11 +12,17 @@
         state: directory
         mode: 0755
 
+    - name: Prepare directories
+      ansible.builtin.file:
+        path: "{{ injected_invos_dir }}"
+        state: directory
+        mode: 0755
+
     - name: Encode history traces into invocations
       ansible.builtin.include_role:
         name: tracerca_encode_traces
       vars:
-        input_path: "{{ working_dir }}/{{ datasets_dir }}/injected/{{ injected_file }}" 
+        input_path: "{{ working_dir }}/datasets/tracerca/injected/{{ injected_file }}" 
         output_path: "{{ injected_invos }}" 
 
     - name: Run tracerca

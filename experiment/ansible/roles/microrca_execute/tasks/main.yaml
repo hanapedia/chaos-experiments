@@ -1,29 +1,25 @@
 # vim: set filetype=yaml.ansible :
 ---
-- name: Run tracerca
+- name: Run trace rca for an injection
   vars:
-    all_features: false
+    results_subdir: "{{ results_dir }}/{{ injected_file.split('.')[0] }}/microrca"
+    microrca_script: "/Users/hirokihanada/code/src/github.com/hanapedia/rca_methods/microrca_refactored/rca.py"
   block: 
+    - name: Prepare directories
+      ansible.builtin.file:
+        path: "{{ results_subdir }}"
+        state: directory
+        mode: 0755
+
     - name: Define command
       ansible.builtin.set_fact:
         command:
           - python
-          - ./files/run_tracerca.py
-          - -p
-          - "{{ results_subdir }}"
-          - -i
-          - "{{ input_path }}"
-          - -o
-          - "{{ output_path }}"
-          - -h 
-          - "{{ uninjected_invos }}"
-          - -l
-          - "{{ results_subdir }}/results.log"
-
-    - name: Define command
-      when: all_features
-      ansible.builtin.set_fact:
-        command: "{{ command + ['-a']}}"
+          - "{{ microrca_script }}"
+          - -d
+          - "{{ working_dir }}/datasets/microrca/{{  injected_file.split('.')[0] }}"
+          - -r
+          - "{{ results_subdir}}"
 
     - name: Execute script
       changed_when: true
@@ -45,5 +41,5 @@
     - name: Note the time
       ansible.builtin.lineinfile:
         path: "{{ base_path }}/rca_log"
-        line: "{{ variant_name }} tracerca: {{ date_now.stdout }}"
+        line: "{{ variant_name }} microrca: {{ date_now.stdout }}"
         create: yes

@@ -1,0 +1,18 @@
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: {{ namespace }}-{{ service }}-delay-{{ fault.version }}
+  namespace: chaos-mesh
+spec:
+  action: delay 
+  mode: one 
+  selector:
+    namespaces:
+      - {{ namespace }}
+    labelSelectors:
+      name: {{ service }}
+{% if fault.type == "delay" %}
+  delay:
+    latency: {{ fault.amount }}
+{% endif %}
+  duration: {{ fault.duration }}s

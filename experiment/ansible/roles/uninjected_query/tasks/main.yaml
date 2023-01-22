@@ -1,0 +1,53 @@
+# vim: set filetype=yaml.ansible :
+---
+- name: Query uninjected data
+  vars:
+    variant_name: "{{ variant.name }}"
+  block:
+    - name: Sleep for x interval seconds 
+      ansible.builtin.wait_for:
+        timeout: "{{ uninjected_query.interval }}"
+      tags:
+        - sleep
+
+    - name: Get interval end time
+      ansible.builtin.command:
+        cmd: date +%s
+      register: sleep_end
+
+    - name: Query tracerca uninjected
+      ansible.builtin.include_role:
+        name: query_tracerca
+      vars:
+        interval: "{{ uninjected_query.interval }}"
+        filename: history.pkl
+        subdir: uninjected
+        append: true
+        end_time: "{{ sleep_end.stdout }}"
+
+    - name: Query microrca uninjected
+      ansible.builtin.include_role:
+        name: query_microrca
+      vars:
+        interval: "{{ uninjected_query.interval }}"
+        subdir: uninjected
+        end_time: "{{ sleep_end.stdout }}"
+
+  rescue:
+    - name: Note failed task
+      ansible.builtin.lineinfile:
+        path: "{{ base_path }}/failed"
+        line: "FAILED:{{ variant_name }}:{{ ansible_failed_task }}"
+        create: yes
+
+  always:
+    - name: Get the execution end time
+      register: date_now
+      ansible.builtin.command: date
+
+    - name: Note the time
+      ansible.builtin.lineinfile:
+        path: "{{ base_path }}/log"
+        line: "{{ variant_name }} uninjection query: {{ date_now.stdout }}"
+        create: yes
+

@@ -3,7 +3,7 @@
 - name: Prepare directories
   vars:
     working_dir: "{{ base_path }}/{{ variant.name }}" 
-    datasets_dir: datasets
+    datasets_dir: datasets/tracerca
     uninjected_invos: "{{ working_dir }}/{{ datasets_dir }}/uninjected/history_invos.pkl" 
   block:
     - name: Get injected data names

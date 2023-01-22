@@ -34,20 +34,14 @@
 - name: Query data
   when: deployed
   block:
-    - name: Query uninjected trace data
+    - name: Query uninjected data
       ansible.builtin.include_role:
-        name: query_traces
-      vars:
-        variant_name: "{{ variant.name }}"
-        interval: "{{ query.interval }}"
-        subdir: uninjected
-        filename: history.pkl
-        append: true
-      loop: "{{ range(0, query.count, 1) | list }}"
+        name: uninjected_query
+      loop: "{{ range(0, uninjected_query.count, 1) | list }}"
 
-    - name: Query injected trace data
+    - name: Query injected data
       ansible.builtin.include_role:
-        name: injected_query_traces
+        name: injected_query
       vars:
         variant_name: "{{ variant.name }}"
         variant_type: "{{ variant.type }}"

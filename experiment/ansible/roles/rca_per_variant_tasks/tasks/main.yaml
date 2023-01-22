@@ -1,0 +1,51 @@
+# vim: set filetype=yaml.ansible :
+---
+- name: Prepare directories
+  vars:
+    working_dir: "{{ base_path }}/{{ variant.name }}" 
+    results_dir: "{{ working_dir }}/results" 
+  block:
+    - name: Create results directory
+      ansible.builtin.file:
+        path: "{{ results_dir }}"
+        state: directory
+        mode: 0755
+
+    - name: Get injected data names
+      ansible.builtin.command: "ls {{ working_dir }}/datasets/tracerca/injected"
+      register: injected_data
+      changed_when: true
+
+    - name: Run MicroRCA
+      vars:
+      block:
+        - name: Run MicroRCA for each injection
+          ansible.builtin.include_role:
+            name: microrca_execute
+          vars:
+            variant_name: "{{ variant.name }}"
+          loop: "{{ injected_data.stdout_lines }}" 
+          loop_control:
+            loop_var: injected_file
+
+    - name: Run TraceRCA
+      vars:
+        uninjected_invos: "{{ working_dir }}/datasets/tracerca/uninjected/history_invos.pkl" 
+      block:
+        - name: Encode history traces into invocations
+          ansible.builtin.include_role:
+            name: tracerca_encode_traces
+          vars:
+            input_path: "{{ working_dir }}/datasets/tracerca/uninjected/history.pkl" 
+            output_path: "{{ uninjected_invos }}" 
+            variant_name: "{{ variant.name }}"
+
+        - name: Run tracerca for each injection
+          when: not encoding_failed
+          ansible.builtin.include_role:
+            name: tracerca_per_injection_tasks
+          vars:
+            variant_name: "{{ variant.name }}"
+          loop: "{{ injected_data.stdout_lines }}" 
+          loop_control:
+            loop_var: injected_file

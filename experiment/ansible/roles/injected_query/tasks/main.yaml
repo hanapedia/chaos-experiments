@@ -44,14 +44,49 @@
       tags:
         - sleep
 
-    - name: Query
+    - name: Sleep during the fault injection
+      ansible.builtin.wait_for:
+        timeout: "{{ fault.duration }}"
+      tags:
+        - sleep
+
+    - name: Get interval end time
+      ansible.builtin.command:
+        cmd: date +%s
+      register: sleep_end
+
+    - name: Query traces
       ansible.builtin.include_role:
-        name: query_traces
+        name: query_tracerca
       vars:
         interval: "{{ fault.duration + 10 }}"
         subdir: injected
         filename: "{{ fault_name }}.pkl" 
         append: false
+        end_time: "{{ sleep_end.stdout }}"
+
+    - name: Set output dir name as a fact
+      ansible.builtin.set_fact:
+        output_dir: "{{ base_path }}/{{ variant_name }}/datasets/microrca/{{ fault_name }}"
+
+    - name: Ensure that the injected query results directory exits
+      ansible.builtin.file:
+        path: "{{ output_dir }}"
+        state: directory
+        mode: 0755
+
+    - name: Copy uninjected data to injection query results dir for concatenation
+      ansible.builtin.copy:
+        src: "{{ base_path }}/{{ variant_name }}/datasets/microrca/uninjected/"
+        dest: "{{ output_dir }}/"
+
+    - name: Query microrca_metrics
+      ansible.builtin.include_role:
+        name: query_microrca
+      vars:
+        interval: "{{ fault.duration + 10 }}"
+        subdir: "{{ fault_name }}"
+        end_time: "{{ sleep_end.stdout }}"
 
   rescue:
     - name: Note failed task

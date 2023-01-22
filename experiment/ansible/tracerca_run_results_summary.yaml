@@ -1,0 +1,19 @@
+# vim: set filetype=yaml.ansible :
+---
+- name: Run experiment results summary
+  hosts: localhost
+  tasks:
+    - name: Define command
+      ansible.builtin.set_fact:
+        command:
+          - python
+          - ../../../ansible/files/run_results_summary.py
+          - -r
+          - ""
+    - name: run script
+      ansible.builtin.command:
+        argv: command
+        chdir: "../generated/chain_fanout_single_db/{{ variant.name }}"
+      loop: "{{ benchmarks.variants }}"
+      loop_control:
+        loop_var: variant

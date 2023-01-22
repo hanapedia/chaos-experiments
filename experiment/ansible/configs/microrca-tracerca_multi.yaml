@@ -1,0 +1,35 @@
+name: Multi db, delay, 30min hist, 2 metrics
+base_path: ../generated/chain_fanout_multi-v2
+benchmarks:
+  manifest_path: /Users/hirokihanada/code/src/github.com/hanapedia/microservices-topologies/generated
+  variants: 
+    # - name: foc5
+    #   type: fanout
+    #   num_services: 5
+    # - name: chc5
+    #   type: chain
+    #   num_services: 5
+    - name: foc10
+      type: fanout
+      num_services: 10
+    - name: chc10
+      type: chain
+      num_services: 10
+    - name: foc15
+      type: fanout
+      num_services: 15
+    - name: chc15
+      type: chain
+      num_services: 15
+fault:
+  type: delay
+  amount: 300ms
+  duration: 60
+  version: 2
+tracerca_query:
+  script_dir: "/Users/hirokihanada/code/src/github.com/hanapedia/rca_methods/tracerca_query/python_rest"
+microrca_query:
+  script_dir: "/Users/hirokihanada/code/src/github.com/hanapedia/rca_methods/microrca_refactored"
+uninjected_query:
+  interval: 300
+  count: 6
