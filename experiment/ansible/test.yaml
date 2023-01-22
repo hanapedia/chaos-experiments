@@ -1,0 +1,14 @@
+# vim: set filetype=yaml.ansible :
+---
+- name: Run experiment 
+  hosts: localhost
+  tasks:
+    - name: Get interval end time
+      ansible.builtin.command:
+        cmd: date +%s
+      register: sleep_end
+    - name: debug
+      ansible.builtin.debug:
+        var: sleep_end.stdout
+        
+

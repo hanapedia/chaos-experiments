@@ -1,0 +1,11 @@
+
+# vim: set filetype=yaml.ansible :
+---
+- name: Run experiment 
+  hosts: localhost
+  vars:
+    output_dir: ./
+  tasks:
+    - name: Prepare node dict
+      ansible.builtin.shell:
+        cmd: kubectl get nodes -o wide | awk '{if (NR!=1) print $1 "," $6":9100"}' > "{{ output_dir }}"/node_dict.csv
