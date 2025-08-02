@@ -1,0 +1,10 @@
+jupyterlab
+jupyterlab-lsp
+pandas
+matplotlib
+numpy
+pprintpp
+networkx
+scipy
+pydot
+tqdm

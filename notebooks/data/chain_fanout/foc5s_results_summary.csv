@@ -1,0 +1,6 @@
+rootcause,tracerca_rank,tracerca_patterns,tracerca_scores,microrca_rank,microrca_patterns,microrca_scores
+fanout-5,1,"fanout-5,fanout-3,fanout-2,fanout-4,fanout-1,","129.98,0.00,0.00,0.00,0.00,",2,"gateway,fanout-5,fanout-4,"," 0.561, 0.32096185051879483, 0.11803814948120518,"
+fanout-4,1,"fanout-4,fanout-3,fanout-2,fanout-5,fanout-1,","113.65,0.00,0.00,0.00,0.00,",1,"fanout-4,gateway,"," 0.6069664236979166, 0.39303357630208335,"
+fanout-1,1,"fanout-1,fanout-4,fanout-3,fanout-5,fanout-2,","126.37,0.00,0.00,0.00,0.00,",1,"fanout-1,gateway,"," 0.6069664236979166, 0.39303357630208335,"
+fanout-2,1,"fanout-2,fanout-1,fanout-3,fanout-4,fanout-5,","135.31,0.00,0.00,0.00,0.00,",2,"gateway,fanout-2,fanout-1,"," 0.561, 0.33177831684747794, 0.10722168315252212,"
+fanout-3,1,"fanout-3,fanout-1,fanout-2,fanout-4,fanout-5,","134.38,0.00,0.00,0.00,0.00,",2,"gateway,fanout-3,fanout-2,"," 0.561, 0.343858043554969, 0.09514195644503098,"

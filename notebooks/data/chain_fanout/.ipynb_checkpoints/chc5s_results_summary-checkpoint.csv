@@ -1,0 +1,6 @@
+rootcause,tracerca_rank,tracerca_patterns,tracerca_scores,microrca_rank,microrca_patterns,microrca_scores
+chain-1,2,"chain-2,chain-1,chain-4,chain-5,chain-3,","117.45,3.61,0.00,0.00,0.00,",2,"gateway,chain-1,chain-2,"," 0.5386290038964844, 0.4613709961035156, 0.0,"
+chain-3,3,"chain-4,chain-1,chain-3,chain-2,chain-5,","116.20,3.47,0.86,0.86,0.00,",3,"chain-2,chain-1,chain-3,gateway,chain-4,chain-5,"," 0.2918483866442055, 0.2675933433743326, 0.22934882907405701, 0.17561607790828207, 0.03559336299912274, 0.0,"
+chain-2,3,"chain-3,chain-1,chain-2,chain-4,chain-5,","117.14,4.44,0.00,0.00,0.00,",3,"chain-1,gateway,chain-2,chain-3,"," 0.49939964648857627, 0.35817666038338786, 0.14242369312803566, 0.0,"
+chain-4,3,"chain-5,chain-1,chain-4,chain-3,chain-2,","111.62,2.66,2.66,1.77,0.89,",4,"chain-3,chain-1,chain-2,chain-4,chain-5,gateway,"," 0.2514863970921699, 0.18622684549846988, 0.18276105714238294, 0.18174219439560974, 0.10333906142692309, 0.09444444444444444,"
+chain-5,1,"chain-5,chain-4,chain-1,chain-2,chain-3,","121.88,3.48,2.60,0.87,0.87,",6,"chain-3,chain-2,chain-1,chain-4,gateway,chain-5,"," 0.2639838605312443, 0.19663731682844393, 0.1849985878998159, 0.1809978378803755, 0.09444444444444444, 0.07893795241567587,"

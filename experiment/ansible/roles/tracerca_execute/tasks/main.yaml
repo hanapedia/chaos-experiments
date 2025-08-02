@@ -29,6 +29,11 @@
       changed_when: true
       ansible.builtin.command:
         argv: "{{ command }}"
+      register: frequent_items
+
+    - name: debug
+      ansible.builtin.debug:
+        var: frequent_items.stdout
 
   rescue:
     - name: Note failed task

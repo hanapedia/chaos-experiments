@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-import matplotlib.font_manager as fm
+# import matplotlib.font_manager as fm
 import matplotlib.colors as clr
 import pandas as pd
 import pickle
@@ -256,7 +256,7 @@ class TraceRcaAnalysisVisualize(TraceRcaAnalysis):
             if 'la_df' in kwargs:
                 data_normal = df.loc[:, col].values
                 data_la = la_df.loc[:, col].values
-                self.draw_histogram(data_normal=data_normal, data_la=data_la, ax=ax)
+                self.draw_ecdf(data_normal=data_normal, data_la=data_la, ax=ax)
             else:
                 df = df.sort_values(by=col)
                 ax.tick_params(labelsize=6)
@@ -411,9 +411,9 @@ class TraceRcaAnalysisVisualize(TraceRcaAnalysis):
         combined_df = self.create_combined_df(topology_df=topology_df, node_df=node_df)
         la_combined_df = self.create_combined_df(topology_df=la_topology_df, node_df=la_node_df)
 
-        fm.fontManager.addfont('./files/MS Mincho.ttf')
+        # fm.fontManager.addfont('./files/MS Mincho.ttf')
         font_size = 36
-        font_family = 'MS Mincho'
+        # font_family = 'MS Mincho'
         line_width = 5
 
         x_label = 'Ratio of Number of Anomalous Traces Through Root Cause \nand Number of Total Anomalous Traces'
@@ -426,12 +426,16 @@ class TraceRcaAnalysisVisualize(TraceRcaAnalysis):
         ax: plt.Axes = plt.gca() 
         
         plt.rcParams['font.size'] = font_size
-        plt.rcParams['font.family'] = font_family
+        # plt.rcParams['font.family'] = font_family
         plt.rcParams['font.weight'] = 'bold'
-        plt.xlabel(x_label, fontdict={'size': font_size, 'family': font_family})
-        plt.ylabel(y_label, fontdict={'size': font_size, 'family': font_family})
-        plt.xticks(fontsize=font_size, fontfamily=font_family)
-        plt.yticks(fontsize=font_size, fontfamily=font_family)
+        # plt.xlabel(x_label, fontdict={'size': font_size, 'family': font_family})
+        # plt.ylabel(y_label, fontdict={'size': font_size, 'family': font_family})
+        # plt.xticks(fontsize=font_size, fontfamily=font_family)
+        # plt.yticks(fontsize=font_size, fontfamily=font_family)
+        plt.xlabel(x_label, fontdict={'size': font_size})
+        plt.ylabel(y_label, fontdict={'size': font_size})
+        plt.xticks(fontsize=font_size)
+        plt.yticks(fontsize=font_size)
 
         data_normal = combined_df.loc[:,col_name].values
         data_la = la_combined_df.loc[:,col_name].values

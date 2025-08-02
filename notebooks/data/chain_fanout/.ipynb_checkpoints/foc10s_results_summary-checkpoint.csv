@@ -1,0 +1,11 @@
+rootcause,tracerca_rank,tracerca_patterns,tracerca_scores,microrca_rank,microrca_patterns,microrca_scores
+fanout-6,1,"fanout-6,fanout-5,fanout-10,fanout-7,fanout-1,fanout-9,fanout-3,fanout-8,fanout-2,fanout-4,","128.41,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,",1,"fanout-6,gateway,"," 0.6069664236979166, 0.39303357630208335,"
+fanout-7,1,"fanout-7,fanout-4,fanout-10,fanout-6,fanout-3,fanout-5,fanout-8,","130.17,0.00,0.00,0.00,0.00,0.00,0.00,",2,"gateway,fanout-7,fanout-6,"," 0.561, 0.3066410902711493, 0.13235890972885073,"
+fanout-5,1,"fanout-5,fanout-3,fanout-10,fanout-7,fanout-2,fanout-4,fanout-8,fanout-1,fanout-9,fanout-6,","128.82,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,",2,"gateway,fanout-5,fanout-4,"," 0.5609999999999999, 0.2741583550140266, 0.16484164498597345,"
+fanout-4,1,"fanout-4,fanout-1,fanout-2,fanout-8,fanout-9,fanout-7,fanout-10,fanout-6,fanout-3,fanout-5,","128.61,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,",3,"gateway,fanout-3,fanout-4,"," 0.5609999999999999, 0.295783394175842, 0.14321660582415802,"
+fanout-1,1,"fanout-1,fanout-10,fanout-5,fanout-8,fanout-7,fanout-3,fanout-2,fanout-9,fanout-6,fanout-4,","132.15,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,",1,"fanout-1,gateway,"," 0.6069664236979166, 0.39303357630208335,"
+fanout-8,1,"fanout-8,fanout-4,fanout-7,fanout-10,fanout-5,fanout-2,fanout-6,fanout-3,fanout-9,fanout-1,","136.71,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,",1,"fanout-8,gateway,"," 0.6069664236979166, 0.39303357630208335,"
+fanout-9,1,"fanout-9,fanout-1,fanout-3,fanout-5,fanout-7,fanout-2,fanout-4,fanout-10,fanout-8,fanout-6,","134.38,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,",2,"gateway,fanout-9,fanout-8,"," 0.5609999999999999, 0.33088186450324675, 0.1081181354967533,"
+fanout-2,-1,"fanout-1,fanout-7,fanout-5,fanout-10,fanout-8,fanout-9,","0.00,0.00,0.00,0.00,0.00,0.00,",1,"fanout-2,gateway,"," 0.6069664236979166, 0.39303357630208335,"
+fanout-10,1,"fanout-10,fanout-8,fanout-3,fanout-6,fanout-7,fanout-5,fanout-4,","135.91,0.00,0.00,0.00,0.00,0.00,0.00,",1,"fanout-10,gateway,"," 0.6069664236979166, 0.39303357630208335,"
+fanout-3,1,"fanout-3,fanout-9,fanout-4,fanout-1,fanout-8,fanout-2,fanout-5,fanout-10,fanout-6,fanout-7,","122.95,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,",1,"fanout-3,gateway,"," 0.6069664236979166, 0.39303357630208335,"

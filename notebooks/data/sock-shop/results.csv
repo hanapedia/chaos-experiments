@@ -1,0 +1,8 @@
+service,rank
+carts,1
+catalogue,2
+front-end,-1
+orders,2
+payment,1
+shipping,2
+user,1

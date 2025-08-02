@@ -1,0 +1,11 @@
+# vim: set filetype=yaml.ansible :
+---
+- name: Run experiment results summary
+  hosts: localhost
+  tasks:
+    - name: run results summary role
+      ansible.builtin.include_role:
+        name: rca_results_summary
+      loop: "{{ benchmarks.variants }}"
+      loop_control:
+        loop_var: variant

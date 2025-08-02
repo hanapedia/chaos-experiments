@@ -6,21 +6,21 @@ benchmarks:
     - name: foc5s
       type: fanout
       num_services: 5
-    # - name: chc5s
-    #   type: chain
-    #   num_services: 5
+    - name: chc5s
+      type: chain
+      num_services: 5
     - name: foc10s
       type: fanout
       num_services: 10
     - name: chc10s
       type: chain
       num_services: 10
-    # - name: foc15s
-    #   type: fanout
-    #   num_services: 15
-    # - name: chc15s
-    #   type: chain
-    #   num_services: 15
+    - name: foc15s
+      type: fanout
+      num_services: 15
+    - name: chc15s
+      type: chain
+      num_services: 15
 fault:
   type: delay
   amount: 600ms

@@ -1,0 +1,18 @@
+# vim: set filetype=yaml.ansible :
+---
+- name: Define command
+  ansible.builtin.set_fact:
+    command:
+      - python
+      - "{{ playbook_dir }}/files/run_results_summary.py"
+      - -v
+      - "{{ variant.name }}"
+
+- name: debug
+  ansible.builtin.debug:
+    var: command
+
+- name: run script
+  ansible.builtin.command:
+    argv: command
+    chdir: "{{ base_path }}/"

@@ -1,101 +1,126 @@
 import os
+from typing import DefaultDict, List
 import click
-import pickle
 import csv
-import pprint 
 import pandas as pd
 from collections import defaultdict
 from pathlib import Path
 
 
 @click.command("Summarize the experiment results")
-@click.option("-r", "--results_folder", "results_folder_name", required=True, type=str)
-def result_summary(results_folder_name):
-    df = pd.DataFrame()
-    results_folder = Path(f'./results/{results_folder_name}')
-    for results in os.listdir(results_folder):
-        summary = summarize(results, results_folder)
-        df = pd.concat([df, summary])
-
-    os.makedirs(Path(f'./summary/{results_folder_name}'), exist_ok=True)
-    output = Path(f'./summary/{results_folder_name}/{results_folder_name}_results.csv')
-    df = df.sort_index()
-    df.to_csv(output)
-
-    os.makedirs(Path(f'./localization_errors/{results_folder_name}'), exist_ok=True)
-    error_output = Path(f'./localization_errors/{results_folder_name}/errors.csv')
-    errornous = df.loc[df['localizedat'] != 1]
-    errornous.to_csv(error_output)
-
-    error_pkl = Path(f'./localization_errors/{results_folder_name}/errors.pkl')
-    with open(error_pkl, "wb") as f:
-        pickle.dump(errornous, f)
-
-def summarize(results, results_folder):
-    filePath = os.path.join(results_folder, results, "results.log")
+@click.option("-v", "--variant_name", "variant_name", default="chc5s", type=str)
+def result_summary(variant_name):
+    working_dir = Path(f"./{variant_name}")
+    results_dir = working_dir / "results"
     summary = defaultdict(list)
-    # print(filePath)
 
-    if not os.path.isfile(filePath):
-        # print(os.path.isfile(filePath))
-        dirnameList = results.split("_")
-        summary['rootcause'] = [dirnameList[0]]
-        summary['faulttype'] = [dirnameList[1]]
-        summary['injectionver'] = [dirnameList[2]]
-        summary['localizedat'] = [-1]
-        df = pd.DataFrame.from_dict(summary).set_index(keys=['rootcause','faulttype','injectionver'], drop=True)
-        return df
+    # list out all the injections
+    for results in os.listdir(results_dir):
+        summary = summarize(results, results_dir, summary)
 
+    df = pd.DataFrame.from_dict(summary)
+
+    output = working_dir / f"{variant_name}_results_summary.csv" 
+    df.to_csv(output, index=False)
+    print(df)
+
+def parse_tracerca_results(tracerca_results):
+    with open(tracerca_results, "r") as f:
+        headers = next(f)
+        headers = ["pattern", "score", "ps", "ips", "p(a|b)", "p(b|a)", "in", "out"]
+
+def summarize(results, results_folder, summary: DefaultDict[str,List]):
+    """
+    Parse microrca and tracerca results files. 
+    Return dataframe with columns: rootcause, tracerca_rank, microrca_rank, tracerca_patterns, microrca_patterns, tracerca_scores, microrca_scores
+    """
+    dirnameList = results.split("_")
+    root_cause_service = dirnameList[0]
+    summary['rootcause'].append(root_cause_service)
+
+    tracerca_results_file = results_folder / results / "tracerca" / "results.log"
+    summary = tracerca_summary(root_cause_service, tracerca_results_file, summary)
+
+    microrca_results_file = results_folder / results / "microrca" / "results.csv"
+    summary = microrca_summary(root_cause_service, microrca_results_file, summary)
+
+    return summary
+
+def tracerca_summary(root_cause_service, results_file, summary: DefaultDict[str, List]):
+    """
+    Parse tracerca result into dict of lists
+    """
+    if len(root_cause_service.split("+")) > 1:
+        # ignore multi root cause injections
+        return summary
+
+    patterns = ''
+    scores = ''
+    pattern_idx = 5
+    score_idx = 4
     ranking = list()
-    keysList = list()
-    summaryItems = ''
-    summaryScores = ''
-    summaryIn = ''
-    summaryOut = ''
-    with open(filePath, "r") as f:
-        for i, line in enumerate(f):
+    rank = -1
+    with open(results_file, "r") as f:
+        _ = next(f)
+        for line in f:
             line = line.strip()
             line_el = line.split("|")
             line_el = [l.strip() for l in line_el]
 
-            if i == 0:
-                keysList.extend([line_el[5],line_el[4],line_el[12],line_el[13]])
-                continue
+            if float(line_el[score_idx]) >= 0:
+                patterns += f"{line_el[pattern_idx]},"
+                scores += f"{line_el[score_idx]},"
+                ranking.append(line_el[pattern_idx])
 
-            # print(line_el[4])
-            if float(line_el[4]) > 0:
-                summaryItems += "%s," % (line_el[5])
-                summaryScores += "%s," % (line_el[4])
-                summaryIn += "%s," % (line_el[10])
-                summaryOut += "%s," % (line_el[11])
-                ranking.append(line_el[5])
-
-        summary[keysList[0]] = [summaryItems]
-        summary[keysList[1]] = [summaryScores]
-        summary[keysList[2]] = [summaryIn]
-        summary[keysList[3]] = [summaryOut]
                 
-    dirnameList = results.split("_")
-    summary['rootcause'] = [dirnameList[0]]
-    summary['faulttype'] = [dirnameList[1]]
-    summary['injectionver'] = [dirnameList[2]]
-    if len(dirnameList[0].split("+")) > 1:
-        ans = dirnameList[0].split("+")  
-        if ans[0] in ranking and ans[1] in ranking:
-            rank = max(ranking.index(ans[0]) + 1, ranking.index(ans[1]) + 1)
-            if rank == 2:
-                rank = 1
-        else:
-            rank = -1
-    elif dirnameList[0] in ranking:
-        rank = ranking.index(dirnameList[0]) + 1
+    if root_cause_service in ranking:
+        rank = ranking.index(root_cause_service) + 1
     else:
         rank = -1
-    summary['localizedat'] = [rank]
 
-    df = pd.DataFrame.from_dict(summary).set_index(keys=['rootcause','faulttype','injectionver'], drop=True)
-    return df
+    summary['tracerca_rank'].append(rank)
+    summary["tracerca_patterns"].append(patterns)
+    summary["tracerca_scores"].append(scores)
 
+    return summary
+
+def microrca_summary(root_cause_service, results_file, summary: DefaultDict[str, List]):
+    """
+    Parse microrca result into dict of lists
+    """
+    patterns = ''
+    scores = ''
+    ranking = list()
+    pattern_idx = 0
+    score_idx = 1
+    rank = -1
+    with open(results_file, "r") as f:
+        reader = csv.reader(f)
+        anomalous_edges = next(reader)
+        ranking_with_db = next(reader)
+        ranking_without_db = next(reader)
+
+        for service in ranking_without_db:
+            service = service.replace("(", "")
+            service = service.replace(")", "")
+            service = service.replace("'", "")
+            service = service.replace('"', "")
+            service = service.strip()
+            service = service.split(",")
+            patterns += f"{service[pattern_idx]},"
+            scores += f"{service[score_idx]},"
+            ranking.append(service[pattern_idx])
+
+    if root_cause_service in ranking:
+        rank = ranking.index(root_cause_service) + 1
+    else:
+        rank = -1
+
+    summary['microrca_rank'].append(rank)
+    summary["microrca_patterns"].append(patterns)
+    summary["microrca_scores"].append(scores)
+
+    return summary
 
 if __name__ == "__main__":
     result_summary()
